@@ -722,7 +722,7 @@ function showConexaoStatus(online){
 }
 
 async function syncFromSupabase(){
-  if(!__supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   try{
     const [cliRes, diagRes, monRes] = await Promise.all([
       _supabase.from('clientes').select('*').order('created_at',{ascending:false}),
@@ -770,7 +770,7 @@ function saveCLI(){localStorage.setItem('artyva_clientes',JSON.stringify(CLIENTE
 function saveMON(){localStorage.setItem('artyva_monitor',JSON.stringify(MONITOR));}
 
 async function saveClienteOnline(c){
-  if(!__supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   await _supabase.from('clientes').upsert({
     id:c.id,nome:c.nome,ramo:c.ramo,email:c.email||null,zap:c.zap||null,
     periodo:c.periodo,link:c.link,exp_date:c.expDate||null,
@@ -778,7 +778,7 @@ async function saveClienteOnline(c){
   });
 }
 async function saveDiagOnline(rows){
-  if(!__supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   const data=rows.filter(r=>!r._meta).map(r=>({
     nome:r.nome,ramo:r.ramo,cidade:r.cidade||null,func:r.func||null,
     dep:r.dep,kpi:r.kpi,k:r.k,val:r.val,peso:r.peso,desvio:r.desvio,
@@ -799,7 +799,7 @@ async function saveDiagOnline(rows){
   }
 }
 async function saveMonitorOnline(m){
-  if(!__supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   await _supabase.from('monitoramento').insert({
     cliente_id:m.id||null,nome:m.nome,acao:m.acao,data:m.data,hora:m.hora
   });
@@ -1858,7 +1858,7 @@ initSupabase();
 
 // Realtime: escuta novos diagnósticos do cliente
 function setupRealtime(){
-  if(!__supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   _supabase.channel('artyva-changes')
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'diagnosticos'},async (payload)=>{
       await syncFromSupabase();
