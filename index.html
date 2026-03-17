@@ -863,7 +863,7 @@ function criarCliente(){
   const periodo=gS('gc-periodo');const val=gS('gc-validade');
   if(!nome||!ramo){document.getElementById('gc-result').innerHTML='<span style="color:var(--red);font-size:11px">Preencha nome e ramo.</span>';return;}
   const id=randId();
-  const link=`https://artyva.com.br/form/${id}`;
+  const link=`https://diagostico-artyva.netlify.app/formulario.html?id=${id}&cliente=${encodeURIComponent(nome)}`;
   const expDate=val==='0'?null:new Date(Date.now()+parseInt(val)*86400000);
   const c={id,nome,ramo,email,zap,periodo:parseInt(periodo),link,expDate:expDate?expDate.toLocaleDateString('pt-BR'):null,criado:new Date().toLocaleDateString('pt-BR'),status:'Aguardando',cobranças:0,ultimaCob:null};
   CLIENTES.push(c);saveCLI();saveClienteOnline(c);
@@ -925,7 +925,7 @@ function simEnvioEmail(nome,email){
 }
 function simEnvioZap(nome,zap){
   if(!zap){alert('WhatsApp não cadastrado.');return;}
-  const msg=encodeURIComponent(`Olá! Aqui é a Artyva Gestão Administrativa. Seu formulário de diagnóstico está disponível. Acesse: https://artyva.com.br/form/`);
+  const msg=encodeURIComponent(`Olá! Aqui é a Artyva Gestão Administrativa. Seu formulário de diagnóstico está disponível. Acesse: https://diagostico-artyva.netlify.app/formulario.html`);
   window.open(`https://wa.me/${zap.replace(/\D/g,'')}?text=${msg}`,'_blank');
 }
 
@@ -965,6 +965,7 @@ function renderClientes(){
         <button class="btn-ghost" onclick="copiarLink('${c.link}')">🔗</button>
         <button class="btn-ghost" onclick="agendarCobranca('${c.id}')">🔔</button>
         <button class="btn-ghost" onclick="selecionarClienteParaForm('${c.nome}')">📋</button>
+        <button class="btn-ghost" style="color:var(--red);border-color:var(--red-border)" onclick="excluirCliente('${c.id}','${c.nome}')">🗑</button>
       </div>
     </div>`).join('');
 }
@@ -977,6 +978,26 @@ function renderMonitor(){
       <div style="font-size:10px;color:var(--muted);min-width:80px">${m.data} ${m.hora}</div>
       <div style="flex:1;font-size:11px;color:#ddd"><span style="font-weight:600">${m.nome}</span> — ${m.acao}</div>
     </div>`).join('');
+}
+
+async function excluirCliente(id, nome){
+  if(!confirm(`Excluir o cliente "${nome}" e todos os seus dados?\nEsta ação não pode ser desfeita.`)) return;
+  // Remove local
+  CLIENTES = CLIENTES.filter(c => c.id !== id);
+  MONITOR = MONITOR.filter(m => m.id !== id);
+  DB = DB.filter(r => r.nome !== nome);
+  saveCLI(); saveMON(); saveDB();
+  // Remove Supabase
+  if(_supabase && isOnline){
+    await _supabase.from('clientes').delete().eq('id', id);
+    await _supabase.from('diagnosticos').delete().eq('nome', nome);
+    await _supabase.from('diagnosticos_meta').delete().eq('nome', nome);
+    await _supabase.from('monitoramento').delete().eq('cliente_id', id);
+  }
+  renderClientes();
+  renderMonitor();
+  popAllSels();
+  alert(`Cliente "${nome}" excluído com sucesso!`);
 }
 
 function selecionarClienteParaForm(nome){
