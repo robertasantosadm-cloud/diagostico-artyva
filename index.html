@@ -698,6 +698,9 @@ async function initSupabase(){
     isOnline = true;
     showConexaoStatus(true);
     await syncFromSupabase();
+    // Render after first sync
+    renderClientes();
+    renderMonitor();
   }catch(e){
     console.error('Erro Supabase:', e.message);
     showConexaoStatus(false);
@@ -755,6 +758,10 @@ async function syncFromSupabase(){
     localStorage.setItem('artyva_clientes',JSON.stringify(CLIENTES));
     localStorage.setItem('artyva_monitor',JSON.stringify(MONITOR));
     console.log('Sync Supabase OK');
+    // Refresh UI after sync
+    renderClientes();
+    renderMonitor();
+    popAllSels();
   }catch(e){console.error('Sync error:',e.message);}
 }
 let charts = {};
@@ -1896,7 +1903,8 @@ function setupRealtime(){
 }
 setTimeout(setupRealtime, 2000);
 
-// Auto-check cobranças pendentes a cada 2 min
+// Auto-check cobranças pendentes a cada 2 min (aguarda 5min antes do primeiro)
+setTimeout(()=>{
 setInterval(()=>{
   CLIENTES.forEach(c=>{
     if(c.status!=='Preenchido'&&c.cobranças<5){
@@ -1908,6 +1916,7 @@ setInterval(()=>{
     }
   });
 },120000);
+}, 300000);
 
 console.log('Artyva Sistema v3.0 — Unificado');
 </script>
