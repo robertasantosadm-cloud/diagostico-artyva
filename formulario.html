@@ -741,6 +741,14 @@ async function enviarFormulario(){
     window.scrollTo({top:0,behavior:'smooth'});
   }
 }
+
+// Auto-preencher nome do cliente a partir do link
+const _urlParams = new URLSearchParams(window.location.search);
+const _clienteParam = _urlParams.get('cliente');
+if(_clienteParam){
+  const _nomeEl = document.getElementById('c-nome');
+  if(_nomeEl) _nomeEl.value = decodeURIComponent(_clienteParam);
+}
 </script>
 </body>
 </html>
