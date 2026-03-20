@@ -7,6 +7,7 @@
 <meta name="description" content="Artyva Gestão Administrativa — Sistema de Diagnóstico Empresarial">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -226,6 +227,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="field"><label>WhatsApp do cliente</label><input id="gc-zap" type="tel" placeholder="+55 11 99999-9999"></div>
           <div class="field"><label>Período de diagnóstico</label>
             <select id="gc-periodo">
+              <option value="1">1 mês (Mensal)</option>
               <option value="3">3 meses</option>
               <option value="6">6 meses</option>
               <option value="9">9 meses</option>
@@ -543,7 +545,15 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- ===================== TAB: DIAGNÓSTICO FINAL ===================== -->
 <div id="tab-diagnostico" class="page">
-  <div class="page-head"><h2>Diagnóstico Final</h2><p>Análise completa + precificação da consultoria Artyva</p></div>
+  <div class="page-head"><h2>Diagnóstico Final</h2><p>Análise completa + precificação da consultoria Artyva</p>
+  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <div style="font-size:10px;font-weight:600;color:var(--brand-teal);width:100%;margin-bottom:6px">📊 Score: como interpretar</div>
+    <div style="flex:1;min-width:80px;text-align:center;background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px;padding:6px"><div style="font-weight:700;color:var(--red)">0–29</div><div style="font-size:9px;color:var(--muted)">Emergência</div></div>
+    <div style="flex:1;min-width:80px;text-align:center;background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:6px;padding:6px"><div style="font-weight:700;color:var(--yellow)">30–49</div><div style="font-size:9px;color:var(--muted)">Crítico</div></div>
+    <div style="flex:1;min-width:80px;text-align:center;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:6px;padding:6px"><div style="font-weight:700;color:var(--blue)">50–69</div><div style="font-size:9px;color:var(--muted)">Atenção</div></div>
+    <div style="flex:1;min-width:80px;text-align:center;background:var(--green-bg);border:1px solid var(--green-border);border-radius:6px;padding:6px"><div style="font-weight:700;color:var(--green)">70–84</div><div style="font-size:9px;color:var(--muted)">Bom</div></div>
+    <div style="flex:1;min-width:80px;text-align:center;background:var(--green-bg);border:1px solid var(--green-border);border-radius:6px;padding:6px"><div style="font-weight:700;color:#00E5A0">85–100</div><div style="font-size:9px;color:var(--muted)">Saudável</div></div>
+  </div></div>
 
   <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
     <select id="diag-cliente" style="max-width:200px" onchange="renderDiagnostico()">
@@ -676,7 +686,7 @@ const ACOES_MAP = {
 // ============================================================
 const SUPABASE_URL = 'https://bxqqygsuxvmdtjugesng.supabase.co'; // Ex: https://xyzxyz.supabase.co
 const SUPABASE_KEY = 'sb_publishable_nxOSdcbaQ6uslLiCTVW5Vg_0-tWI3Xj'; // Chave anon/public
-let supabase = null;
+let _supabase = null;
 let isOnline = false;
 
 // Modo offline (fallback com localStorage enquanto não configurar Supabase)
@@ -691,13 +701,16 @@ async function initSupabase(){
     return;
   }
   try{
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     // Test connection
-    const {error} = await supabase.from('clientes').select('id').limit(1);
+    const {error} = await _supabase.from('clientes').select('id').limit(1);
     if(error)throw error;
     isOnline = true;
     showConexaoStatus(true);
     await syncFromSupabase();
+    // Render after first sync
+    renderClientes();
+    renderMonitor();
   }catch(e){
     console.error('Erro Supabase:', e.message);
     showConexaoStatus(false);
@@ -722,12 +735,12 @@ function showConexaoStatus(online){
 }
 
 async function syncFromSupabase(){
-  if(!supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   try{
     const [cliRes, diagRes, monRes] = await Promise.all([
-      supabase.from('clientes').select('*').order('created_at',{ascending:false}),
-      supabase.from('diagnosticos').select('*').order('created_at',{ascending:false}),
-      supabase.from('monitoramento').select('*').order('created_at',{ascending:false}),
+      _supabase.from('clientes').select('*').order('created_at',{ascending:false}),
+      _supabase.from('diagnosticos').select('*').order('created_at',{ascending:false}),
+      _supabase.from('monitoramento').select('*').order('created_at',{ascending:false}),
     ]);
     if(cliRes.data) CLIENTES = cliRes.data.map(r=>({
       id:r.id,nome:r.nome,ramo:r.ramo,email:r.email,zap:r.zap,
@@ -744,7 +757,7 @@ async function syncFromSupabase(){
       id:r.cliente_id,nome:r.nome,acao:r.acao,data:r.data,hora:r.hora
     }));
     // Also fetch meta
-    const metaRes = await supabase.from('diagnosticos_meta').select('*');
+    const metaRes = await _supabase.from('diagnosticos_meta').select('*');
     if(metaRes.data) metaRes.data.forEach(r=>{
       DB = DB.filter(x=>!(x.nome===r.nome&&x._meta));
       DB.push({nome:r.nome,ramo:r.ramo,cidade:r.cidade,func:r.func,
@@ -755,6 +768,10 @@ async function syncFromSupabase(){
     localStorage.setItem('artyva_clientes',JSON.stringify(CLIENTES));
     localStorage.setItem('artyva_monitor',JSON.stringify(MONITOR));
     console.log('Sync Supabase OK');
+    // Refresh UI after sync
+    renderClientes();
+    renderMonitor();
+    popAllSels();
   }catch(e){console.error('Sync error:',e.message);}
 }
 let charts = {};
@@ -770,15 +787,15 @@ function saveCLI(){localStorage.setItem('artyva_clientes',JSON.stringify(CLIENTE
 function saveMON(){localStorage.setItem('artyva_monitor',JSON.stringify(MONITOR));}
 
 async function saveClienteOnline(c){
-  if(!supabase||!isOnline)return;
-  await supabase.from('clientes').upsert({
+  if(!_supabase||!isOnline)return;
+  await _supabase.from('clientes').upsert({
     id:c.id,nome:c.nome,ramo:c.ramo,email:c.email||null,zap:c.zap||null,
     periodo:c.periodo,link:c.link,exp_date:c.expDate||null,
     criado:c.criado,status:c.status,cobrancas:c.cobranças||0,ultima_cob:c.ultimaCob||null
   });
 }
 async function saveDiagOnline(rows){
-  if(!supabase||!isOnline)return;
+  if(!_supabase||!isOnline)return;
   const data=rows.filter(r=>!r._meta).map(r=>({
     nome:r.nome,ramo:r.ramo,cidade:r.cidade||null,func:r.func||null,
     dep:r.dep,kpi:r.kpi,k:r.k,val:r.val,peso:r.peso,desvio:r.desvio,
@@ -786,12 +803,12 @@ async function saveDiagOnline(rows){
   }));
   if(data.length){
     // Delete old entries for this client first
-    await supabase.from('diagnosticos').delete().eq('nome',rows[0].nome);
-    await supabase.from('diagnosticos').insert(data);
+    await _supabase.from('diagnosticos').delete().eq('nome',rows[0].nome);
+    await _supabase.from('diagnosticos').insert(data);
   }
   const meta=rows.find(r=>r._meta);
   if(meta){
-    await supabase.from('diagnosticos_meta').upsert({
+    await _supabase.from('diagnosticos_meta').upsert({
       nome:meta.nome,ramo:meta.ramo||null,cidade:meta.cidade||null,func:meta.func||null,
       desafios:meta.desafios||null,objetivos:meta.objetivos||null,
       pontos:meta.pontos||null,notas:meta.notas||null,periodo:meta.periodo||3
@@ -799,8 +816,8 @@ async function saveDiagOnline(rows){
   }
 }
 async function saveMonitorOnline(m){
-  if(!supabase||!isOnline)return;
-  await supabase.from('monitoramento').insert({
+  if(!_supabase||!isOnline)return;
+  await _supabase.from('monitoramento').insert({
     cliente_id:m.id||null,nome:m.nome,acao:m.acao,data:m.data,hora:m.hora
   });
 }
@@ -863,7 +880,7 @@ function criarCliente(){
   const periodo=gS('gc-periodo');const val=gS('gc-validade');
   if(!nome||!ramo){document.getElementById('gc-result').innerHTML='<span style="color:var(--red);font-size:11px">Preencha nome e ramo.</span>';return;}
   const id=randId();
-  const link=`https://artyva.com.br/form/${id}`;
+  const link=`https://diagnostico.artyva.com.br/formulario.html?id=${id}&cliente=${encodeURIComponent(nome)}`;
   const expDate=val==='0'?null:new Date(Date.now()+parseInt(val)*86400000);
   const c={id,nome,ramo,email,zap,periodo:parseInt(periodo),link,expDate:expDate?expDate.toLocaleDateString('pt-BR'):null,criado:new Date().toLocaleDateString('pt-BR'),status:'Aguardando',cobranças:0,ultimaCob:null};
   CLIENTES.push(c);saveCLI();saveClienteOnline(c);
@@ -883,7 +900,7 @@ function criarCliente(){
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-blue btn-sm" onclick="copiarLink('${link}')">📋 Copiar Link</button>
         <button class="btn btn-success btn-sm" onclick="simEnvioEmail('${nome}','${email}')">📧 Simular E-mail</button>
-        <button class="btn btn-outline btn-sm" onclick="simEnvioZap('${nome}','${zap}')">💬 Simular WhatsApp</button>
+        <button class="btn btn-outline btn-sm" onclick="simEnvioZap('${nome}','${zap}','${link}')">💬 Simular WhatsApp</button>
       </div>
     </div>`;
   renderClientes();renderMonitor();
@@ -923,10 +940,41 @@ function simEnvioEmail(nome,email){
   if(!email){alert('E-mail não cadastrado para este cliente.');return;}
   alert(`📧 E-mail simulado para: ${email}\n\nEm produção, integre com SendGrid, Mailchimp ou Gmail API para envio automático.\n\nO conteúdo da mensagem está na pré-visualização ao lado.`);
 }
-function simEnvioZap(nome,zap){
-  if(!zap){alert('WhatsApp não cadastrado.');return;}
-  const msg=encodeURIComponent(`Olá! Aqui é a Artyva Gestão Administrativa. Seu formulário de diagnóstico está disponível. Acesse: https://artyva.com.br/form/`);
-  window.open(`https://wa.me/${zap.replace(/\D/g,'')}?text=${msg}`,'_blank');
+function simEnvioZap(nome,zap,link){
+  if(!zap){alert('WhatsApp não cadastrado para este cliente.');return;}
+  const zapNum=zap.replace(/\D/g,'');
+  if(!zapNum){alert('Número inválido.');return;}
+  const cl=clientes.find(c=>c.nome===nome)||{};
+  const p=cl.periodo||3;
+  const linkForm=link||('https://diagnostico.artyva.com.br/formulario.html?cliente='+encodeURIComponent(nome));
+  const texto=[
+    'Olá, '+nome+'! 👋',
+    '',
+    'Aqui é a Roberta, da *Artyva Gestão Administrativa*. 🎯',
+    '',
+    'Seu formulário de diagnóstico empresarial está pronto!',
+    '',
+    '📋 *O que você vai preencher:*',
+    '• Dados financeiros dos últimos '+p+' meses',
+    '• Informações operacionais e de RH',
+    '• Dados de vendas, estoque e tecnologia',
+    '',
+    '⏱ Tempo estimado: 20 a 30 minutos',
+    '🔒 Todas as informações são confidenciais',
+    '',
+    '👉 Acesse aqui:',
+    linkForm,
+    '',
+    'Preencha com calma e honestidade para uma análise precisa! 😊',
+    '',
+    '_Artyva — Gestão que gera resultados_',
+    '_📞 +55 11 2368-4091 | @artyva_adm_'
+  ].join('\n');
+  const url='https://wa.me/'+zapNum+'?text='+encodeURIComponent(texto);
+  const a=document.createElement('a');
+  a.href=url;a.target='_blank';a.rel='noopener';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>document.body.removeChild(a),100);
 }
 
 function carregarClienteDemo(){
@@ -965,6 +1013,7 @@ function renderClientes(){
         <button class="btn-ghost" onclick="copiarLink('${c.link}')">🔗</button>
         <button class="btn-ghost" onclick="agendarCobranca('${c.id}')">🔔</button>
         <button class="btn-ghost" onclick="selecionarClienteParaForm('${c.nome}')">📋</button>
+        <button class="btn-ghost" style="color:var(--red);border-color:var(--red-border)" onclick="excluirCliente('${c.id}','${c.nome}')">🗑</button>
       </div>
     </div>`).join('');
 }
@@ -977,6 +1026,26 @@ function renderMonitor(){
       <div style="font-size:10px;color:var(--muted);min-width:80px">${m.data} ${m.hora}</div>
       <div style="flex:1;font-size:11px;color:#ddd"><span style="font-weight:600">${m.nome}</span> — ${m.acao}</div>
     </div>`).join('');
+}
+
+async function excluirCliente(id, nome){
+  if(!confirm(`Excluir o cliente "${nome}" e todos os seus dados?\nEsta ação não pode ser desfeita.`)) return;
+  // Remove local
+  CLIENTES = CLIENTES.filter(c => c.id !== id);
+  MONITOR = MONITOR.filter(m => m.id !== id);
+  DB = DB.filter(r => r.nome !== nome);
+  saveCLI(); saveMON(); saveDB();
+  // Remove Supabase
+  if(_supabase && isOnline){
+    await _supabase.from('clientes').delete().eq('id', id);
+    await _supabase.from('diagnosticos').delete().eq('nome', nome);
+    await _supabase.from('diagnosticos_meta').delete().eq('nome', nome);
+    await _supabase.from('monitoramento').delete().eq('cliente_id', id);
+  }
+  renderClientes();
+  renderMonitor();
+  popAllSels();
+  alert(`Cliente "${nome}" excluído com sucesso!`);
 }
 
 function selecionarClienteParaForm(nome){
@@ -1182,16 +1251,81 @@ function processarExcel(input){
   alert('Para usar importação Excel:\n1. Baixe o template pelo botão "Baixar Template Excel"\n2. Preencha com seus dados\n3. Faça o upload aqui\n\nEm produção, integre com SheetJS para leitura automática.');
 }
 function gerarTemplateExcel(e){
-  e.preventDefault();
-  const header=['Departamento','KPI','Mês 1','Mês 2','Mês 3','Mês 4','Mês 5','Mês 6'].join(',');
-  const rows=[header];
-  Object.keys(DEP).forEach(dep=>{
-    DEP[dep].kpis.forEach(kpi=>{
-      rows.push([DEP[dep].label,kpi.label,'','','','','',''].join(','));
-    });
+  if(e)e.preventDefault();
+  if(typeof XLSX==='undefined'){alert('Aguarde carregar...');return;}
+  const wb=XLSX.utils.book_new();
+  const meses=['Mes 1','Mes 2','Mes 3','Mes 4','Mes 5','Mes 6'];
+
+  const wsI=XLSX.utils.aoa_to_sheet([
+    ['TEMPLATE ARTYVA - DIAGNOSTICO EMPRESARIAL'],[''],
+    ['INSTRUCOES:'],
+    ['1. Valores numericos nas colunas de cada mes'],
+    ['2. Escala 1-5: use numeros inteiros'],
+    ['3. Percentual: so o numero, sem % (ex: 12.5)'],
+    ['4. Valor R$: so o numero (ex: 80000)'],
+    ['5. Nao altere nomes das colunas'],
+    ['6. Sem dados: deixe em branco'],
+    ['7. Salve como .xlsx e faca upload no formulario'],
+  ]);
+  XLSX.utils.book_append_sheet(wb,wsI,'Instrucoes');
+
+  const wsId=XLSX.utils.aoa_to_sheet([
+    ['Campo','Valor'],
+    ['Nome da empresa',''],['Setor',''],['Estado',''],['Cidade',''],
+    ['Nr funcionarios',''],['Desafios',''],['Objetivos',''],['Pontos fortes',''],
+  ]);
+  XLSX.utils.book_append_sheet(wb,wsId,'Identificacao');
+
+  const depsList=[
+    {label:'Financeiro',fields:[
+      ['fat','Faturamento mensal R$'],['fat_cli','Faturamento por cliente R$'],
+      ['mb','Margem bruta pct'],['ml','Margem liquida pct'],['ticket','Ticket medio R$'],
+      ['cfixo','Custo fixo R$'],['cvar','Custo variavel R$'],['inadim','Inadimplencia pct'],
+      ['divida','Endividamento pct faturamento'],['rentab','Rentabilidade pct']
+    ]},
+    {label:'Operacoes',fields:[
+      ['proc_map','Processos mapeados pct'],['proc_crit','Nr processos criticos'],
+      ['tempo_exec','Tempo execucao dias'],['retrab','Retrabalho pct'],
+      ['cap_prod','Capacidade utilizada pct'],['automacao','Automacao 1 a 5'],
+      ['falhas','Falhas nr'],['qualidade','Qualidade 1 a 5']
+    ]},
+    {label:'RH Pessoas',fields:[
+      ['turnover','Turnover pct'],['absen','Absenteismo pct'],
+      ['sem_resp','Funcoes sem responsavel pct'],['hext','Horas extras funcionario'],
+      ['satisf','Satisfacao equipe 1 a 5'],['trein','Treinamentos ano']
+    ]},
+    {label:'Estoque',fields:[
+      ['giro','Giro estoque vezes mes'],['cobertura','Cobertura dias'],
+      ['ruptura','Ruptura pct'],['perda','Perdas pct']
+    ]},
+    {label:'Vendas',fields:[
+      ['cli_ativos','Clientes ativos'],['conv','Conversao pct'],
+      ['ciclo','Ciclo vendas dias'],['recomp','Recorrentes pct'],['nps','NPS 0 a 100']
+    ]},
+    {label:'Tecnologia',fields:[
+      ['integ','Integracao 1 a 5'],['backup','Backup 1 a 5'],
+      ['auto_tec','Automacao 1 a 5'],['infra','Infraestrutura 1 a 5']
+    ]},
+  ];
+
+  depsList.forEach(dep=>{
+    const rows=[['Departamento','KPI','Chave',...meses,'Obs']];
+    dep.fields.forEach(f=>rows.push([dep.label,f[1],f[0],...meses.map(()=>''),'']));
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:16},{wch:36},{wch:14},...meses.map(()=>({wch:10})),{wch:20}];
+    XLSX.utils.book_append_sheet(wb,ws,dep.label);
   });
-  const blob=new Blob([rows.join('\n')],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='template_artyva.csv';a.click();
+
+  const wbout=XLSX.write(wb,{bookType:'xlsx',type:'binary'});
+  const buf=new ArrayBuffer(wbout.length);
+  const view=new Uint8Array(buf);
+  for(let i=0;i<wbout.length;i++)view[i]=wbout.charCodeAt(i)&0xFF;
+  const blob=new Blob([buf],{type:'application/octet-stream'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='template_artyva.xlsx';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(a.href);},100);
 }
 
 // ============================================================
@@ -1259,7 +1393,12 @@ function aggRows(rows,periodo){
 
 function calcTrend(vals){
   if(vals.length<2)return 0;
-  const sorted=vals.sort((a,b)=>a.mes-b.mes);
+  const sorted=vals.slice().sort((a,b)=>a.mes-b.mes);
+  const valid=sorted.filter(v=>v.val>0);
+  if(valid.length<2)return 0;
+  const first=valid[0].val,last=valid[valid.length-1].val;
+  return first?((last-first)/first)*100:0;
+}
   const first=sorted[0].val,last=sorted[sorted.length-1].val;
   return first?((last-first)/first)*100:0;
 }
@@ -1343,7 +1482,7 @@ function renderDashboard(){
     insightsHtml=desvios.slice(0,3).map(d=>`
       <div class="insight">
         <div class="insight-title">⚠️ Desvio detectado — ${d.dep} · ${d.kpi}</div>
-        <div style="font-size:11px;color:#ccc">Valor atual: <strong style="color:${d.inv?'var(--red)':'var(--red)'}">${d.val.toFixed(1)}</strong> · Referência: ${d.ref} · Tendência: ${d.trend>0?'↑':'↓'} ${Math.abs(d.trend||0).toFixed(1)}%</div>
+        <div style="font-size:11px;color:#ccc">Valor atual: <strong style="color:${d.inv?'var(--red)':'var(--red)'}">${typeof d.val==='number'&&d.val>1000?'R$ '+d.val.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):d.val.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}</strong> · Ref: ${d.ref} · Tendência: <span style="color:${d.trend!==0?(d.trend>0?'var(--green)':'var(--red)'):'var(--muted)'}">${d.trend!==0?(d.trend>5?'↑':d.trend<-5?'↓':'→'):'→'} ${d.trend!==0?Math.abs(d.trend||0).toFixed(1)+'%':'período único'}</span></div>
       </div>`).join('');
   } else {
     insightsHtml='<div class="alert alert-ok">✓ Nenhum desvio crítico identificado no período selecionado.</div>';
@@ -1858,8 +1997,8 @@ initSupabase();
 
 // Realtime: escuta novos diagnósticos do cliente
 function setupRealtime(){
-  if(!supabase||!isOnline)return;
-  supabase.channel('artyva-changes')
+  if(!_supabase||!isOnline)return;
+  _supabase.channel('artyva-changes')
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'diagnosticos'},async (payload)=>{
       await syncFromSupabase();
       popAllSels();renderClientes();renderMonitor();
@@ -1875,7 +2014,8 @@ function setupRealtime(){
 }
 setTimeout(setupRealtime, 2000);
 
-// Auto-check cobranças pendentes a cada 2 min
+// Auto-check cobranças pendentes a cada 2 min (aguarda 5min antes do primeiro)
+setTimeout(()=>{
 setInterval(()=>{
   CLIENTES.forEach(c=>{
     if(c.status!=='Preenchido'&&c.cobranças<5){
@@ -1887,6 +2027,7 @@ setInterval(()=>{
     }
   });
 },120000);
+}, 300000);
 
 console.log('Artyva Sistema v3.0 — Unificado');
 </script>
