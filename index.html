@@ -3,377 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artyva — Sistema de Diagnóstico Empresarial</title>
-<meta name="description" content="Artyva Gestão Administrativa — Sistema de Diagnóstico Empresarial">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<title>Artyva — Painel de Gestão</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#1E1E1E;--bg2:#252525;--bg3:#2D2D2D;--bg4:#363636;
-  --border:#3A3A3A;--border2:#4A4A4A;
-  --text:#E8E8E8;--muted:#888;--muted2:#666;
-  --red:#E05252;--red-bg:#2D1818;--red-border:#4A2020;
-  --yellow:#F0C040;--yellow-bg:#2D2510;--yellow-border:#4A3A10;
-  --green:#4CAF82;--green-bg:#182D22;--green-border:#204A30;
-  --blue:#5B9CF6;--blue-bg:#18243A;--blue-border:#2A3A5A;
-  --purple:#A78BFA;--cyan:#60D8F0;
-  --brand-pink:#FF3366;--brand-teal:#00C8A0;
-}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-h1,h2,h3{font-family:'Space Grotesk',sans-serif}
-
-/* TOP BAR */
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:16px;height:56px;position:sticky;top:0;z-index:100}
-.logo-img{height:32px;object-fit:contain}
-.topbar-divider{width:1px;height:24px;background:var(--border)}
-.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#fff}
-.topbar-sub{font-size:10px;color:var(--muted)}
-.mode-badge{margin-left:auto;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
-.mode-admin{background:#1A2A1A;border:1px solid #2A4A2A;color:var(--green)}
-.mode-client{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue)}
-
-/* NAV */
-.nav-wrap{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
-.nav-tab{padding:12px 16px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
-.nav-tab.active{color:#fff;border-bottom-color:var(--brand-pink)}
-.nav-tab:hover:not(.active){color:#ccc}
-
-/* PAGES */
-.page{display:none;padding:20px;max-width:1200px;margin:0 auto}
-.page.active{display:block}
-
-/* SECTIONS */
-.sec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
-.sec-head{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
-.area-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--border)}
-.area-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-
-/* GRIDS */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
-@media(max-width:700px){.g2,.g3,.g4,.g5{grid-template-columns:1fr 1fr}}
-
-/* FORMS */
-.field label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
-input[type=text],input[type=number],input[type=email],input[type=tel],input[type=date],select,textarea{
-  width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;
-  color:var(--text);padding:8px 11px;font-size:12px;outline:none;transition:border .2s;
-  font-family:inherit
-}
-input:focus,select:focus,textarea:focus{border-color:var(--blue)}
-select option{background:var(--bg3)}
-
-/* BUTTONS */
-.btn{padding:9px 20px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;letter-spacing:.3px}
-.btn-primary{background:var(--brand-pink);color:#fff}.btn-primary:hover{opacity:.9}
-.btn-success{background:var(--brand-teal);color:#fff}.btn-success:hover{opacity:.9}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.9}
-.btn-outline{background:transparent;border:1px solid var(--border2);color:#ccc}.btn-outline:hover{background:var(--bg3)}
-.btn-sm{padding:5px 12px;font-size:11px}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;font-size:10px;cursor:pointer}
-.btn-ghost:hover{background:var(--bg3);color:#ccc}
-.btn-ghost.sel{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
-
-/* BADGES */
-.badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px}
-.b-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
-.b-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border)}
-.b-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
-.b-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
-.b-purple{background:#1A1530;color:var(--purple);border:1px solid #3A2A6A}
-
-/* KPI CARDS */
-.kpi-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;transition:border .2s}
-.kpi-card:hover{border-color:var(--border2)}
-.kpi-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;line-height:1.1}
-.kpi-label{font-size:10px;color:var(--muted);margin-top:4px}
-.kpi-delta{font-size:10px;margin-top:3px}
-.kpi-icon{font-size:20px;margin-bottom:6px}
-.kpi-prog{background:var(--bg4);border-radius:3px;height:4px;margin-top:8px}
-.kpi-prog-bar{height:4px;border-radius:3px;transition:width .5s}
-
-/* ALERTS */
-.alert{border-radius:9px;padding:12px 15px;margin-bottom:10px;border-left:3px solid;font-size:12px;line-height:1.5}
-.alert-crit{background:var(--red-bg);border-color:var(--red);color:#FFCDCD}
-.alert-med{background:var(--yellow-bg);border-color:var(--yellow);color:#FFE8A0}
-.alert-ok{background:var(--green-bg);border-color:var(--green);color:#B0FFD8}
-.alert-info{background:var(--blue-bg);border-color:var(--blue);color:#B0D8FF}
-
-/* TABLE */
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:var(--bg3);color:var(--muted);padding:9px 11px;text-align:left;font-weight:500;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
-td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text)}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.02)}
-
-/* PROGRESS */
-.progress{background:var(--bg4);border-radius:4px;height:6px}
-.prog-bar{height:6px;border-radius:4px;transition:width .4s}
-
-/* INSIGHT BOX */
-.insight{background:linear-gradient(135deg,#1A2840,#1A1A2A);border:1px solid #3A4A6A;border-radius:10px;padding:14px;margin-bottom:12px}
-.insight-title{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-
-/* LINK BOX */
-.link-box{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:10px;padding:16px;margin-bottom:12px}
-.link-url{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--cyan);font-family:'Courier New',monospace;word-break:break-all;margin:8px 0}
-
-/* STEP */
-.step-num{width:24px;height:24px;border-radius:50%;background:var(--blue-bg);border:1px solid var(--blue-border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--blue);flex-shrink:0}
-
-/* SCALE BTNS */
-.scale-wrap{display:flex;gap:3px;flex-wrap:wrap}
-.s-btn{min-width:32px;height:28px;border:1px solid var(--border);border-radius:5px;background:var(--bg3);color:var(--muted);cursor:pointer;font-size:11px;transition:all .12s;padding:0 6px}
-.s-btn.s-ok{background:var(--green-bg);border-color:var(--green);color:var(--green)}
-.s-btn.s-mid{background:var(--yellow-bg);border-color:var(--yellow);color:var(--yellow)}
-.s-btn.s-bad{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-.yn-btn{width:52px;height:28px;border:1px solid var(--border);border-radius:5px;background:var(--bg3);color:var(--muted);cursor:pointer;font-size:11px;font-weight:600;transition:all .12s}
-.yn-sim{background:var(--green-bg);border-color:var(--green);color:var(--green)}
-.yn-nao{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-
-/* CHART PERIOD SELECTOR */
-.period-btns{display:flex;gap:4px;flex-wrap:wrap}
-.period-btn{padding:5px 12px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;font-size:11px;font-weight:500;transition:all .15s}
-.period-btn.sel{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
-
-/* TOTAL BOX */
-.total-box{background:linear-gradient(135deg,var(--blue-bg),#1A1A2A);border:1px solid var(--blue-border);border-radius:12px;padding:20px;text-align:center;margin-top:14px}
-.total-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--blue)}
-
-/* MONITORING ROW */
-.monitor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
-.monitor-row:last-child{border-bottom:none}
-
-/* PAGE HEADER */
-.page-head{margin-bottom:20px}
-.page-head h2{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
-.page-head p{font-size:12px;color:var(--muted)}
-
-/* RANKING ROW */
-.rank-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #2A2A2A}
-.rank-row:last-child{border-bottom:none}
-.rank-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-
-/* RESPONSIVE FIX */
-.scroll-x{overflow-x:auto}
-
-/* MONTH BUTTONS */
-.month-btn-grid{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
-.m-btn{padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;font-size:10px;font-weight:500;transition:all .15s}
-.m-btn.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
-.m-btn.q-sel{background:var(--green-bg);border-color:var(--green);color:var(--green)}
-
-/* CLIENT FORM WRAPPER */
-.client-form-shell{max-width:720px;margin:0 auto}
-.prog-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px}
-
-/* DIVIDER */
-.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+  :root { --pink: #FF3366; --bg: #111; --card: #1A1A1A; --border: #333; --text: #EEE; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  input { background: #222; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 15px; box-sizing: border-box; }
+  .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+  .btn-primary { background: var(--pink); color: white; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,51,102,0.3); }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th { text-align: left; color: #666; font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 16px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .link-area { background: #0A192F; border: 1px solid #112240; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; }
 </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div class="topbar-title">ARTYVA</div>
-  <div class="topbar-divider"></div>
-  <div class="topbar-title">DIAGNÓSTICO ESTRATÉGICO</div>
-  <div class="mode-badge mode-admin" id="status-badge">PAINEL DE GESTÃO</div>
-</div>
-
-<div class="nav-wrap">
-  <div class="nav-tab active" onclick="showPage('page-lista')">DIAGNÓSTICOS</div>
-  <div class="nav-tab" onclick="showPage('page-novo')">NOVO CLIENTE</div>
-  <div class="nav-tab" id="tab-cliente" style="display:none" onclick="showPage('page-cliente')">RELATÓRIO ATUAL</div>
-</div>
-
-<div id="page-lista" class="page active">
-  <div class="page-head">
-    <h2>Empresas Diagnosticadas</h2>
-    <p>Lista de diagnósticos recebidos e pendentes</p>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1 style="margin:0; font-size: 20px; color: var(--pink);">ARTYVA</h1>
+      <p style="margin:0; font-size: 12px; color: #666;">DIAGNÓSTICO ESTRATÉGICO</p>
+    </div>
   </div>
-  <div class="sec scroll-x">
+
+  <div class="card">
+    <h3 style="margin-top:0">Gerar Novo Diagnóstico</h3>
+    <input type="text" id="clienteNome" placeholder="Nome do Cliente ou Empresa">
+    <button class="btn btn-primary" onclick="gerarLink()">GERAR LINK DE ENVIO</button>
+    <div id="linkArea" class="link-area">
+      <p style="margin:0 0 10px 0; font-size: 12px; color: #888;">Envie este link para o cliente:</p>
+      <div id="linkFinal" style="color: #64FFDA; font-family: monospace; word-break: break-all; font-size: 13px;"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Empresas Diagnosticadas</h3>
     <table>
-      <thead>
-        <tr>
-          <th>DATA</th>
-          <th>EMPRESA / CLIENTE</th>
-          <th>SETOR</th>
-          <th>STATUS</th>
-          <th>AÇÃO</th>
-        </tr>
-      </thead>
-      <tbody id="tabela-corpo">
-        </tbody>
+      <thead><tr><th>Data</th><th>Empresa / Cliente</th><th>Status</th></tr></thead>
+      <tbody id="listaClientes"></tbody>
     </table>
   </div>
 </div>
 
-<div id="page-novo" class="page">
-  <div class="page-head">
-    <h2>Novo Diagnóstico</h2>
-    <p>Gere um link exclusivo para o seu cliente preencher</p>
-  </div>
-  <div class="sec">
-    <div class="field" style="margin-bottom:12px">
-      <label>Nome da Empresa ou Cliente</label>
-      <input type="text" id="n-cliente" placeholder="Ex: Padaria do João">
-    </div>
-    <button class="btn btn-primary" onclick="gerarLink()">GERAR LINK EXCLUSIVO</button>
-    
-    <div id="link-resultado" style="display:none; margin-top:20px">
-      <div class="link-box">
-        <p style="font-size:11px; color:var(--muted)">Link pronto para envio:</p>
-        <div class="link-url" id="link-gerado"></div>
-        <button class="btn btn-success btn-sm" onclick="copiarLink()">COPIAR LINK</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="page-cliente" class="page">
-    <div class="page-head">
-      <h2 id="detalhe-nome-empresa">Carregando...</h2>
-      <p id="detalhe-info-geral">Relatório Gerencial Detalhado</p>
-    </div>
-  
-    <div class="g3">
-      <div class="kpi-card">
-        <div class="kpi-icon">💰</div>
-        <div class="kpi-val" id="kpi-margem">0%</div>
-        <div class="kpi-label">Margem Média</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">🚀</div>
-        <div class="kpi-val" id="kpi-crescimento">0%</div>
-        <div class="kpi-label">Crescimento Período</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">⚖️</div>
-        <div class="kpi-val" id="kpi-ponto-equilibrio">R$ 0</div>
-        <div class="kpi-label">Ponto de Equilíbrio</div>
-      </div>
-    </div>
-  
-    <div class="sec" style="margin-top:16px">
-      <div class="sec-head">📈 Evolução Financeira</div>
-      <div style="height:300px">
-        <canvas id="graficoFinanceiro"></canvas>
-      </div>
-    </div>
-</div>
-
 <script>
-// CONFIGURAÇÕES SUPABASE (Suas chaves confirmadas)
 const SB_URL = "https://bxqqygsuxvmdtjugesng.supabase.co";
 const SB_KEY = "sb_publishable_nxOSdcbaQ6uslLiCTVW5Vg_0-tWI3Xj";
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
-let chartInstance = null;
-
-// MOSTRAR PÁGINAS
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  // Ativa a aba correspondente
-  const tabs = document.querySelectorAll('.nav-tab');
-  if(id === 'page-lista') tabs[0].classList.add('active');
-  if(id === 'page-novo') tabs[1].classList.add('active');
-  if(id === 'page-cliente') tabs[2].classList.add('active');
-}
-
-// GERAR LINK EXCLUSIVO (AQUI FOI A MUDANÇA PARA VERCEL)
 function gerarLink() {
-  const nome = document.getElementById('n-cliente').value;
-  if(!nome) return alert("Digite o nome da empresa");
-  
-  const id = "ARV-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-  // URL ATUALIZADA PARA O VERCEL (LINHA 257)
-  const url = `https://diagostico-artyva.vercel.app/formulario.html?id=${id}&cliente=${encodeURIComponent(nome)}`;
-  
-  document.getElementById('link-gerado').innerText = url;
-  document.getElementById('link-resultado').style.display = 'block';
+  const nome = document.getElementById('clienteNome').value;
+  if(!nome) return alert("Por favor, digite o nome do cliente.");
+  const url = `https://diagostico-artyva-6op684vdd-robertasantosadm-clouds-projects.vercel.app/formulario.html?cliente=${encodeURIComponent(nome)}`;
+  document.getElementById('linkFinal').innerText = url;
+  document.getElementById('linkArea').style.display = 'block';
 }
 
-function copiarLink() {
-  const link = document.getElementById('link-gerado').innerText;
-  navigator.clipboard.writeText(link);
-  alert("Link copiado!");
+async function load() {
+  const { data, error } = await sb.from('diagnosticos').select('*').order('data_envio', { ascending: false });
+  if(data) {
+    document.getElementById('listaClientes').innerHTML = data.map(d => `
+      <tr>
+        <td>${new Date(d.data_envio).toLocaleDateString()}</td>
+        <td><strong>${d.empresa_nome}</strong></td>
+        <td><span style="background:#132A13; color:#4CAF82; padding:4px 8px; border-radius:4px; font-size:11px;">RECEBIDO</span></td>
+      </tr>`).join('');
+  }
 }
-
-// CARREGAR LISTA DO SUPABASE
-async function carregarLista() {
-  const { data, error } = await sb
-    .from('diagnosticos')
-    .select('*')
-    .order('data_envio', { ascending: false });
-
-  if(error) return console.error(error);
-
-  const corpo = document.getElementById('tabela-corpo');
-  corpo.innerHTML = data.map(d => `
-    <tr>
-      <td>${new Date(d.data_envio).toLocaleDateString()}</td>
-      <td><b>${d.empresa_nome}</b></td>
-      <td><span class="badge b-blue">${d.setor || 'N/A'}</span></td>
-      <td><span class="badge b-green">RECEBIDO</span></td>
-      <td><button class="btn btn-sm btn-outline" onclick="verRelatorio('${d.id}')">VER ANALISE</button></td>
-    </tr>
-  `).join('');
-}
-
-// VER RELATÓRIO E GERAR GRÁFICO
-async function verRelatorio(id) {
-  const { data, error } = await sb
-    .from('diagnosticos')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if(error) return;
-
-  document.getElementById('tab-cliente').style.display = 'block';
-  showPage('page-cliente');
-
-  document.getElementById('detalhe-nome-empresa').innerText = data.empresa_nome;
-  
-  const kpis = data.valores_kpi || {};
-  const meses = Object.keys(kpis);
-  const faturamento = meses.map(m => kpis[m].faturamento || 0);
-  const custos = meses.map(m => kpis[m].custos || 0);
-
-  // Lógica Simples de KPI para o dashboard
-  const totalFat = faturamento.reduce((a, b) => a + b, 0);
-  const totalCus = custos.reduce((a, b) => a + b, 0);
-  const margem = totalFat > 0 ? (((totalFat - totalCus) / totalFat) * 100).toFixed(1) : 0;
-  
-  document.getElementById('kpi-margem').innerText = margem + "%";
-  document.getElementById('kpi-ponto-equilibrio').innerText = "R$ " + (totalCus / (meses.length || 1)).toLocaleString();
-
-  // Gráfico
-  if(chartInstance) chartInstance.destroy();
-  const ctx = document.getElementById('graficoFinanceiro').getContext('2d');
-  chartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: meses,
-      datasets: [
-        { label: 'Faturamento', data: faturamento, borderColor: '#FF3366', backgroundColor: '#FF3366', tension: 0.3 },
-        { label: 'Custos', data: custos, borderColor: '#5B9CF6', backgroundColor: '#5B9CF6', tension: 0.3 }
-      ]
-    },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-}
-
-// Iniciar lista
-carregarLista();
+load();
 </script>
-
 </body>
 </html>
