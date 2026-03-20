@@ -900,7 +900,7 @@ function criarCliente(){
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-blue btn-sm" onclick="copiarLink('${link}')">📋 Copiar Link</button>
         <button class="btn btn-success btn-sm" onclick="simEnvioEmail('${nome}','${email}')">📧 Simular E-mail</button>
-        <button class="btn btn-outline btn-sm" onclick="simEnvioZap('${nome}','${zap}','${link}')">💬 Simular WhatsApp</button>
+        <button class="btn btn-outline btn-sm" onclick="simEnvioZapById('${id}')">💬 Simular WhatsApp</button>
       </div>
     </div>`;
   renderClientes();renderMonitor();
@@ -940,6 +940,12 @@ function simEnvioEmail(nome,email){
   if(!email){alert('E-mail não cadastrado para este cliente.');return;}
   alert(`📧 E-mail simulado para: ${email}\n\nEm produção, integre com SendGrid, Mailchimp ou Gmail API para envio automático.\n\nO conteúdo da mensagem está na pré-visualização ao lado.`);
 }
+function simEnvioZapById(id){
+  const c=clientes.find(x=>x.id===id);
+  if(!c){alert('Cliente não encontrado.');return;}
+  simEnvioZap(c.nome,c.zap,c.link);
+}
+
 function simEnvioZap(nome,zap,link){
   if(!zap){alert('WhatsApp não cadastrado para este cliente.');return;}
   const zapNum=zap.replace(/\D/g,'');
@@ -1397,9 +1403,6 @@ function calcTrend(vals){
   const valid=sorted.filter(v=>v.val>0);
   if(valid.length<2)return 0;
   const first=valid[0].val,last=valid[valid.length-1].val;
-  return first?((last-first)/first)*100:0;
-}
-  const first=sorted[0].val,last=sorted[sorted.length-1].val;
   return first?((last-first)/first)*100:0;
 }
 
