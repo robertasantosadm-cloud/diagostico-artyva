@@ -175,9 +175,31 @@ tr:hover td{background:rgba(255,255,255,.02)}
 /* DIVIDER */
 .divider{border:none;border-top:1px solid var(--border);margin:16px 0}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:#1E1E1E;z-index:99999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#252525;border:1px solid #3A3A3A;border-radius:16px;padding:40px;width:100%;max-width:380px;text-align:center}
+.login-box input{width:100%;background:#2D2D2D;border:1px solid #3A3A3A;border-radius:8px;color:#E8E8E8;padding:12px 16px;font-size:14px;outline:none;margin:16px 0;text-align:center;letter-spacing:2px}
+.login-box input:focus{border-color:#FF3366}
+.login-btn{width:100%;padding:13px;background:#FF3366;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.login-btn:hover{opacity:.9}
+.login-err{color:#E05252;font-size:12px;margin-top:10px;min-height:18px}
 </style>
 </head>
 <body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size:40px;margin-bottom:8px">🔒</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Artyva</div>
+    <div style="font-size:12px;color:#888;margin-bottom:24px">Sistema de Diagnóstico Empresarial</div>
+    <div style="font-size:13px;color:#888;margin-bottom:4px">Digite a senha para acessar</div>
+    <input type="password" id="login-input" placeholder="••••••••••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+    <button class="login-btn" onclick="fazerLogin()">Entrar →</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -947,9 +969,15 @@ function simEnvioZapById(id){
 }
 
 function simEnvioZap(nome,zap,link){
-  if(!zap){alert('WhatsApp não cadastrado para este cliente.');return;}
-  const zapNum=zap.replace(/\D/g,'');
-  if(!zapNum){alert('Número inválido.');return;}
+  if(!zap||!zap.trim()){
+    const linkForm2=link||('https://diagnostico.artyva.com.br/formulario.html?cliente='+encodeURIComponent(nome));
+    const txt='Olá, '+nome+'! 👋\n\nAqui é a Roberta, da *Artyva Gestão Administrativa*. 🎯\n\nSeu formulário está pronto:\n'+linkForm2+'\n\n_Artyva — Gestão que gera resultados_';
+    prompt('WhatsApp não cadastrado. Copie a mensagem:',txt);
+    return;
+  }
+  let zapNum=zap.replace(/\D/g,'');
+  if(zapNum.length<=11) zapNum='55'+zapNum;
+  if(!zapNum||zapNum.length<10){alert('Número inválido. Verifique o cadastro.');return;}
   const cl=clientes.find(c=>c.nome===nome)||{};
   const p=cl.periodo||3;
   const linkForm=link||('https://diagnostico.artyva.com.br/formulario.html?cliente='+encodeURIComponent(nome));
@@ -2033,6 +2061,43 @@ setInterval(()=>{
 }, 300000);
 
 console.log('Artyva Sistema v3.0 — Unificado');
+
+// ============ LOGIN ============
+const HASH_SENHA = 'c0069eeb891ce4872c9d48493081e357ef0a076e47b5a789bdb38ba5e3121e5e';
+
+async function sha256(msg){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function fazerLogin(){
+  const senha = document.getElementById('login-input').value;
+  if(!senha){document.getElementById('login-err').textContent='Digite a senha.';return;}
+  const hash = await sha256(senha);
+  if(hash === HASH_SENHA){
+    sessionStorage.setItem('artyva_auth','1');
+    document.getElementById('login-screen').style.display='none';
+  } else {
+    document.getElementById('login-err').textContent='Senha incorreta. Tente novamente.';
+    document.getElementById('login-input').value='';
+    document.getElementById('login-input').focus();
+  }
+}
+
+// Verificar se já está autenticado
+(function(){
+  if(sessionStorage.getItem('artyva_auth')==='1'){
+    const ls = document.getElementById('login-screen');
+    if(ls) ls.style.display='none';
+  } else {
+    // Foca no campo de senha
+    setTimeout(()=>{
+      const inp = document.getElementById('login-input');
+      if(inp) inp.focus();
+    }, 100);
+  }
+})();
+
 </script>
 </body>
 </html>
