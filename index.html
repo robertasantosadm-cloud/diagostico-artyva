@@ -1038,7 +1038,7 @@ function simEnvioZapById(id){
 
 function simEnvioZap(nome,zap,link){
   if(!zap||!zap.trim()){
-    const linkForm2=link||('https://diagnostico.artyva.com.br/formulario.html?cliente='+encodeURIComponent(nome));
+    const linkForm2=link||(window.location.origin+'/formulario.html?cliente='+encodeURIComponent(nome));
     const txt='Olá, '+nome+'! 👋\n\nAqui é a Roberta, da *Artyva Gestão Administrativa*. 🎯\n\nSeu formulário está pronto:\n'+linkForm2+'\n\n_Artyva — Gestão que gera resultados_';
     prompt('WhatsApp não cadastrado. Copie a mensagem:',txt);
     return;
@@ -1048,7 +1048,7 @@ function simEnvioZap(nome,zap,link){
   if(!zapNum||zapNum.length<10){alert('Número inválido. Verifique o cadastro.');return;}
   const cl=clientes.find(c=>c.nome===nome)||{};
   const p=cl.periodo||3;
-  const linkForm=link||('https://diagnostico.artyva.com.br/formulario.html?cliente='+encodeURIComponent(nome));
+  const linkForm=link||(window.location.origin+'/formulario.html?cliente='+encodeURIComponent(nome));
   const texto=[
     'Olá, '+nome+'! 👋',
     '',
