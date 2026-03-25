@@ -1057,12 +1057,10 @@ function renderClientes(){
 
 function renderMonitor(){
   const el=document.getElementById('monitor-lista');
-  // Pendentes aguardando preenchimento
   const pendentes=CLIENTES.filter(c=>c.status!=='Preenchido');
   let pendHtml='';
   if(pendentes.length){
-    pendHtml='<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:var(--yellow);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">⏳ Aguardando preenchimento</div>'+
-    pendentes.map(c=>{
+    const rows=pendentes.map(function(c){
       let diasCriado=0;
       if(c.criado){
         const partes=c.criado.split('/');
@@ -1070,51 +1068,36 @@ function renderMonitor(){
       }
       const diasCob=c.ultimaCob?Math.floor((Date.now()-new Date(c.ultimaCob))/86400000):null;
       const diasLabel=diasCriado===0?'hoje':diasCriado+' dia'+(diasCriado>1?'s':'');
-      return '<div class="monitor-row" style="flex-wrap:wrap;background:var(--yellow-bg);border-radius:8px;padding:8px 10px;margin-bottom:4px">'+
-        '<div style="flex:1;min-width:120px">'+
-        '<div style="font-size:12px;font-weight:600;color:#fff">'+c.nome+'</div>'+
-        '<div style="font-size:10px;color:var(--muted)">Criado há '+diasLabel+' · '+(diasCob!==null?'Última cobrança há '+diasCob+'d':'Nunca cobrado')+'</div>'+
-        '</div>'+
-        '<button class="btn-ghost" style="color:#4CAF82;border-color:#204A30;font-size:10px" onclick="cobrarClienteZap(''+c.id+'')">💬 Cobrar no Zap</button>'+
-        '</div>';
-    }).join('')+'</div>';
+      const cobLabel=diasCob!==null?'Última cobrança há '+diasCob+'d':'Nunca cobrado';
+      return '<div class="monitor-row" style="flex-wrap:wrap;background:var(--yellow-bg);border-radius:8px;padding:8px 10px;margin-bottom:4px">'
+        +'<div style="flex:1;min-width:120px">'
+        +'<div style="font-size:12px;font-weight:600;color:#fff">'+c.nome+'</div>'
+        +'<div style="font-size:10px;color:var(--muted)">Criado há '+diasLabel+' · '+cobLabel+'</div>'
+        +'</div>'
+        +'<button class="btn-ghost" style="color:#4CAF82;border-color:#204A30;font-size:10px;cursor:pointer" onclick="cobrarClienteZapStr(`'+c.id+'`)">💬 Cobrar no Zap</button>'
+        +'</div>';
+    });
+    pendHtml='<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:var(--yellow);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">⏳ Aguardando preenchimento</div>'+rows.join('')+'</div>';
   }
   if(!MONITOR.length&&!pendentes.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Sem atividade registrada.</div>';return;}
   const atividadeHtml=MONITOR.length?
     '<div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">📋 Histórico de atividades</div>'+
-    MONITOR.slice(-15).reverse().map(m=>
-      '<div class="monitor-row">'+
-      '<div style="font-size:10px;color:var(--muted);min-width:80px">'+(m.data||'')+' '+(m.hora||'')+'</div>'+
-      '<div style="flex:1;font-size:11px;color:#ddd"><span style="font-weight:600">'+m.nome+'</span> — '+m.acao+'</div>'+
-      '</div>').join(''):'';
+    MONITOR.slice(-15).reverse().map(function(m){
+      return '<div class="monitor-row">'
+        +'<div style="font-size:10px;color:var(--muted);min-width:80px">'+(m.data||'')+' '+(m.hora||'')+'</div>'
+        +'<div style="flex:1;font-size:11px;color:#ddd"><span style="font-weight:600">'+m.nome+'</span> — '+m.acao+'</div>'
+        +'</div>';
+    }).join(''):'';
   el.innerHTML=pendHtml+atividadeHtml;
 }
-
+function cobrarClienteZapStr(id){cobrarClienteZap(id);}
 function cobrarClienteZap(id){
   const c=CLIENTES.find(x=>x.id===id);
   if(!c){alert('Cliente não encontrado.');return;}
   const nCob=(c.cobranças||0)+1;
   const msg=nCob===1
-    ?'Olá, '+c.nome+'! 👋
-
-Passando para verificar se conseguiu acessar o formulário de diagnóstico. 😊
-
-🔗 Acesse aqui:
-'+c.link+'
-
-Qualquer dúvida, é só chamar!
-
-_Artyva — Gestão que gera resultados_'
-    :'Olá, '+c.nome+'! 🎯
-
-Ainda aguardamos o preenchimento do seu diagnóstico empresarial.
-
-Sabemos que a rotina é corrida, mas são apenas 20 minutinhos que podem transformar seu negócio! 💡
-
-🔗 Seu link:
-'+c.link+'
-
-_Artyva — Gestão que gera resultados_';
+    ?'Olá, '+c.nome+'! 👋\n\nPassando para verificar se conseguiu acessar o formulário de diagnóstico. 😊\n\n🔗 Acesse aqui:\n'+c.link+'\n\nQualquer dúvida, é só chamar!\n\n_Artyva — Gestão que gera resultados_'
+    :'Olá, '+c.nome+'! 🎯\n\nAinda aguardamos o preenchimento do seu diagnóstico empresarial.\n\nSabemos que a rotina é corrida, mas são apenas 20 minutinhos que podem transformar seu negócio! 💡\n\n🔗 Seu link:\n'+c.link+'\n\n_Artyva — Gestão que gera resultados_';
   let zapNum=(c.zap||'').replace(/\D/g,'');
   if(zapNum.length<=11) zapNum='55'+zapNum;
   if(!zapNum||zapNum.length<10){
