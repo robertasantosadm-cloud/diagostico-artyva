@@ -12,42 +12,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#1E1E1E;--bg2:#252525;--bg3:#2D2D2D;--bg4:#363636;
-  --border:#3A3A3A;--border2:#4A4A4A;
-  --text:#E8E8E8;--muted:#888;--muted2:#666;
-  --red:#E05252;--red-bg:#2D1818;--red-border:#4A2020;
-  --yellow:#F0C040;--yellow-bg:#2D2510;--yellow-border:#4A3A10;
-  --green:#4CAF82;--green-bg:#182D22;--green-border:#204A30;
-  --blue:#5B9CF6;--blue-bg:#18243A;--blue-border:#2A3A5A;
-  --purple:#A78BFA;--cyan:#60D8F0;
-  --brand-pink:#FF3366;--brand-teal:#00C8A0;
+  --bg:#F7F7F5;--bg2:#FFFFFF;--bg3:#F0F0ED;--bg4:#E8E8E4;
+  --border:#E0DDD8;--border2:#CCCAC4;
+  --text:#1A1A1A;--muted:#666;--muted2:#999;
+  --red:#D63B3B;--red-bg:#FDF0F0;--red-border:#F5C6C6;
+  --yellow:#C9860A;--yellow-bg:#FEF9EC;--yellow-border:#F5E0A0;
+  --green:#1E7A4E;--green-bg:#EFF9F4;--green-border:#A8DFC4;
+  --blue:#2B6CB0;--blue-bg:#EEF4FC;--blue-border:#BCD6F5;
+  --purple:#6B46C1;--cyan:#0D7C8F;
+  --brand-pink:#FF3366;--brand-teal:#00A885;
 }
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 h1,h2,h3{font-family:'Space Grotesk',sans-serif}
 
 /* TOP BAR */
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:16px;height:56px;position:sticky;top:0;z-index:100}
+.topbar{background:#FFFFFF;border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:16px;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
 .logo-img{height:32px;object-fit:contain}
 .topbar-divider{width:1px;height:24px;background:var(--border)}
-.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#fff}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text)}
 .topbar-sub{font-size:10px;color:var(--muted)}
 .mode-badge{margin-left:auto;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
-.mode-admin{background:#1A2A1A;border:1px solid #2A4A2A;color:var(--green)}
+.mode-admin{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
 .mode-client{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue)}
 
 /* NAV */
-.nav-wrap{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
+.nav-wrap{background:#FFFFFF;border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
 .nav-tab{padding:12px 16px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
-.nav-tab.active{color:#fff;border-bottom-color:var(--brand-pink)}
-.nav-tab:hover:not(.active){color:#ccc}
+.nav-tab.active{color:var(--brand-pink);border-bottom-color:var(--brand-pink);font-weight:600}
+.nav-tab:hover:not(.active){color:#444}
 
 /* PAGES */
 .page{display:none;padding:20px;max-width:1200px;margin:0 auto}
 .page.active{display:block}
 
 /* SECTIONS */
-.sec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
-.sec-head{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
+.sec{background:#FFFFFF;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.sec-head{font-size:12px;font-weight:600;color:#1E3A6E;margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
 .area-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--border)}
 .area-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 
@@ -70,27 +70,27 @@ select option{background:var(--bg3)}
 
 /* BUTTONS */
 .btn{padding:9px 20px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;letter-spacing:.3px}
-.btn-primary{background:var(--brand-pink);color:#fff}.btn-primary:hover{opacity:.9}
-.btn-success{background:var(--brand-teal);color:#fff}.btn-success:hover{opacity:.9}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.9}
-.btn-outline{background:transparent;border:1px solid var(--border2);color:#ccc}.btn-outline:hover{background:var(--bg3)}
+.btn-primary{background:var(--brand-pink);color:var(--text)}.btn-primary:hover{opacity:.9}
+.btn-success{background:var(--brand-teal);color:var(--text)}.btn-success:hover{opacity:.9}
+.btn-blue{background:var(--blue);color:var(--text)}.btn-blue:hover{opacity:.9}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:#444}.btn-outline:hover{background:var(--bg3)}
 .btn-sm{padding:5px 12px;font-size:11px}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;font-size:10px;cursor:pointer}
-.btn-ghost:hover{background:var(--bg3);color:#ccc}
+.btn-ghost:hover{background:var(--bg3);color:#444}
 .btn-ghost.sel{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
 
 /* BADGES */
 .badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px}
-.b-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
-.b-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border)}
-.b-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
-.b-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
-.b-purple{background:#1A1530;color:var(--purple);border:1px solid #3A2A6A}
+.b-red{background:var(--red-bg);color:#9B1C1C;border:1px solid var(--red-border)}
+.b-yellow{background:var(--yellow-bg);color:#78420A;border:1px solid var(--yellow-border)}
+.b-green{background:var(--green-bg);color:#14532D;border:1px solid var(--green-border)}
+.b-blue{background:var(--blue-bg);color:#1E3A6E;border:1px solid var(--blue-border)}
+.b-purple{background:#F3F0FF;color:#4C1D95;border:1px solid #C4B5FD}
 
 /* KPI CARDS */
-.kpi-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;transition:border .2s}
-.kpi-card:hover{border-color:var(--border2)}
-.kpi-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;line-height:1.1}
+.kpi-card{background:#FFFFFF;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.kpi-card:hover{border-color:var(--brand-pink);box-shadow:0 2px 8px rgba(255,51,102,0.08)}
+.kpi-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);line-height:1.1}
 .kpi-label{font-size:10px;color:var(--muted);margin-top:4px}
 .kpi-delta{font-size:10px;margin-top:3px}
 .kpi-icon{font-size:20px;margin-bottom:6px}
@@ -99,14 +99,14 @@ select option{background:var(--bg3)}
 
 /* ALERTS */
 .alert{border-radius:9px;padding:12px 15px;margin-bottom:10px;border-left:3px solid;font-size:12px;line-height:1.5}
-.alert-crit{background:var(--red-bg);border-color:var(--red);color:#FFCDCD}
-.alert-med{background:var(--yellow-bg);border-color:var(--yellow);color:#FFE8A0}
-.alert-ok{background:var(--green-bg);border-color:var(--green);color:#B0FFD8}
-.alert-info{background:var(--blue-bg);border-color:var(--blue);color:#B0D8FF}
+.alert-crit{background:var(--red-bg);border-color:var(--red);color:#7F1D1D}
+.alert-med{background:var(--yellow-bg);border-color:var(--yellow);color:#78350F}
+.alert-ok{background:var(--green-bg);border-color:var(--green);color:#14532D}
+.alert-info{background:var(--blue-bg);border-color:var(--blue);color:#1E3A6E}
 
 /* TABLE */
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:var(--bg3);color:var(--muted);padding:9px 11px;text-align:left;font-weight:500;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+th{background:var(--bg3);color:var(--muted);padding:9px 11px;text-align:left;font-weight:600;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
 td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text)}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.02)}
@@ -116,8 +116,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .prog-bar{height:6px;border-radius:4px;transition:width .4s}
 
 /* INSIGHT BOX */
-.insight{background:linear-gradient(135deg,#1A2840,#1A1A2A);border:1px solid #3A4A6A;border-radius:10px;padding:14px;margin-bottom:12px}
-.insight-title{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.insight{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:10px;padding:14px;margin-bottom:12px}
+.insight-title{font-size:12px;font-weight:600;color:#1E3A6E;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 
 /* LINK BOX */
 .link-box{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:10px;padding:16px;margin-bottom:12px}
@@ -142,16 +142,16 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .period-btn.sel{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
 
 /* TOTAL BOX */
-.total-box{background:linear-gradient(135deg,var(--blue-bg),#1A1A2A);border:1px solid var(--blue-border);border-radius:12px;padding:20px;text-align:center;margin-top:14px}
-.total-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--blue)}
+.total-box{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:12px;padding:20px;text-align:center;margin-top:14px}
+.total-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--blue-bg-dark,#1E3A6E)}
 
 /* MONITORING ROW */
-.monitor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.monitor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text)}
 .monitor-row:last-child{border-bottom:none}
 
 /* PAGE HEADER */
 .page-head{margin-bottom:20px}
-.page-head h2{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.page-head h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
 .page-head p{font-size:12px;color:var(--muted)}
 
 /* RANKING ROW */
@@ -161,6 +161,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* RESPONSIVE FIX */
 .scroll-x{overflow-x:auto}
+/* TOOLTIP KPI */
+.kpi-tooltip{position:fixed;background:#1A1A1A;color:#FFF;font-size:11px;padding:8px 12px;border-radius:8px;max-width:240px;z-index:9999;pointer-events:none;line-height:1.6;display:none;border:1px solid #333}
 
 /* MONTH BUTTONS */
 .month-btn-grid{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
@@ -177,13 +179,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;background:#1E1E1E;z-index:99999;display:flex;align-items:center;justify-content:center}
-.login-box{background:#252525;border:1px solid #3A3A3A;border-radius:16px;padding:40px;width:100%;max-width:380px;text-align:center}
-.login-box input{width:100%;background:#2D2D2D;border:1px solid #3A3A3A;border-radius:8px;color:#E8E8E8;padding:12px 16px;font-size:14px;outline:none;margin:16px 0;text-align:center;letter-spacing:2px}
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#FFF0F4,#F7F7F5);z-index:99999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#FFFFFF;border:1px solid #E0DDD8;border-radius:16px;padding:40px;width:100%;max-width:380px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.08)}
+.login-box input{width:100%;background:#F7F7F5;border:1px solid #E0DDD8;border-radius:8px;color:#1A1A1A;padding:12px 16px;font-size:14px;outline:none;margin:16px 0;text-align:center;letter-spacing:2px}
 .login-box input:focus{border-color:#FF3366}
-.login-btn{width:100%;padding:13px;background:#FF3366;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.login-btn{width:100%;padding:13px;background:#FF3366;color:var(--text);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
 .login-btn:hover{opacity:.9}
-.login-err{color:#E05252;font-size:12px;margin-top:10px;min-height:18px}
+.login-err{color:#D63B3B;font-size:12px;margin-top:10px;min-height:18px}
 </style>
 </head>
 <body>
@@ -191,7 +193,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <div id="login-screen">
   <div class="login-box">
     <div style="font-size:40px;margin-bottom:8px">🔒</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Artyva</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px">Artyva</div>
     <div style="font-size:12px;color:#888;margin-bottom:24px">Sistema de Diagnóstico Empresarial</div>
     <div style="font-size:13px;color:#888;margin-bottom:4px">Digite a senha para acessar</div>
     <input type="password" id="login-input" placeholder="••••••••••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
@@ -273,8 +275,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
       <div class="sec">
         <div class="sec-head">📬 Mensagem automática ao cliente</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12px;line-height:1.7;color:#ddd" id="msg-preview">
-          <div style="font-weight:600;color:#fff;margin-bottom:8px">Pré-visualização da mensagem</div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12px;line-height:1.7;color:#333" id="msg-preview">
+          <div style="font-weight:600;color:var(--text);margin-bottom:8px">Pré-visualização da mensagem</div>
           <div id="msg-text">Gere um link para ver a mensagem.</div>
         </div>
       </div>
@@ -322,7 +324,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <!-- Progresso -->
   <div class="prog-wrap">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-      <span style="font-size:11px;font-weight:600;color:#fff">Progresso do preenchimento</span>
+      <span style="font-size:11px;font-weight:600;color:var(--text)">Progresso do preenchimento</span>
       <span style="font-size:11px;color:var(--muted)" id="prog-pct-txt">0%</span>
     </div>
     <div class="progress"><div class="prog-bar" id="main-prog" style="width:0%;background:var(--blue)"></div></div>
@@ -388,7 +390,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <option value="">Todos</option>
         <option value="SIM">Desvio: SIM</option><option value="NÃO">Desvio: NÃO</option>
       </select>
-      <button class="btn btn-outline btn-sm" onclick="exportarBase()">📤 Exportar CSV</button>
+      <button class="btn btn-outline btn-sm" onclick="exportarBase()">📤 Exportar CSV (todos)</button>
+        <button class="btn btn-outline btn-sm" style="color:var(--green);border-color:var(--green-border)" onclick="exportarClienteExcel()">📊 Exportar Excel do cliente</button>
     </div>
     <div class="scroll-x">
       <table>
@@ -601,11 +604,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <!-- ===================== TAB: RELATÓRIO ===================== -->
 <div id="tab-relatorio" class="page">
   <div class="page-head"><h2>Relatório para o Cliente</h2><p>Versão minimalista pronta para exportar</p></div>
-  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
     <select id="rel-cliente" style="max-width:200px" onchange="renderRelatorio()">
       <option value="">Selecione cliente...</option>
     </select>
+    <button class="btn btn-primary btn-sm" onclick="gerarRelatorioIA()">🤖 Gerar com IA + Mercado</button>
     <button class="btn btn-outline btn-sm" onclick="window.print()">🖨 Exportar / Imprimir</button>
+  </div>
+  <div id="rel-ia-loading" style="display:none;text-align:center;padding:20px;color:var(--muted)">
+    <div style="font-size:24px;margin-bottom:8px">🤖</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text)">Gerando diagnóstico com IA...</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">Analisando dados, buscando benchmarks do setor e calculando impactos</div>
+    <div style="margin-top:12px;height:4px;background:var(--border);border-radius:4px;overflow:hidden">
+      <div id="rel-ia-prog" style="height:4px;background:var(--brand-pink);border-radius:4px;width:0%;transition:width 0.5s"></div>
+    </div>
   </div>
   <div id="rel-content">
     <div style="text-align:center;padding:40px;color:var(--muted)">Selecione um cliente.</div>
@@ -716,6 +728,59 @@ let isOnline = false;
 let DB = JSON.parse(localStorage.getItem('artyva_db')||'[]');
 let CLIENTES = JSON.parse(localStorage.getItem('artyva_clientes')||'[]');
 let MONITOR = JSON.parse(localStorage.getItem('artyva_monitor')||'[]');
+
+// ============================================================
+// TOOLTIP GLOBAL PARA KPI CARDS
+// ============================================================
+const KPI_TIPS = {
+  fat:'Faturamento total do mês, sem descontar custos. Benchmark: R$ 60-80k para PMEs.',
+  mb:'Margem bruta: quanto sobra após custos diretos. Meta saudável: acima de 30%.',
+  ml:'Margem líquida: o que fica no bolso após TUDO. Meta: acima de 12%.',
+  ticket:'Valor médio por venda/pedido. Aumentar o ticket é a alavanca mais rápida de crescimento.',
+  cfixo:'Custos que não mudam com as vendas. Acima de 40% do faturamento é sinal de atenção.',
+  cvar:'Custos que variam com as vendas: insumos, comissões, frete.',
+  inadim:'% do faturamento não recebido no prazo. Acima de 5% impacta diretamente o caixa.',
+  divida:'Dívidas em relação ao faturamento. Acima de 20% representa risco financeiro.',
+  rentab:'Retorno sobre o investimento. Abaixo de 18% ao ano, vale revisar o modelo de negócio.',
+  proc_map:'% dos processos documentados. Sem documentação, o negócio depende de pessoas-chave.',
+  retrab:'% de tarefas refeitas por erros. Cada 1% de retrabalho representa custo oculto.',
+  cap_prod:'% da capacidade utilizada. Abaixo de 70% indica ociosidade; acima de 90%, risco de gargalo.',
+  automacao:'Nível de automação. Negócios automatizados crescem 2-3x mais rápido.',
+  falhas:'Falhas operacionais nos últimos 3 meses. Meta: menos de 2.',
+  qualidade:'Avaliação da qualidade. Abaixo de 4/5 afeta a retenção de clientes.',
+  turnover:'% de funcionários que saíram no ano. Acima de 15% gera custo de R$3k-15k por substituição.',
+  absen:'Faltas e atrasos. Acima de 3% indica problema de clima organizacional.',
+  sem_resp:'Funções sem dono definido. Causa retrabalho, conflitos e perda de oportunidades.',
+  satisf:'Satisfação da equipe. Equipes satisfeitas são 21% mais produtivas (Gallup).',
+  giro:'Vezes que o estoque se renova por mês. Baixo giro = capital parado.',
+  ruptura:'% de vezes que faltou produto. Cada ruptura = venda perdida e cliente insatisfeito.',
+  perda:'% do estoque perdido. Impacta diretamente a margem.',
+  cli_ativos:'Clientes que compraram nos últimos 3 meses. Base ativa saudável = crescimento sustentável.',
+  conv:'% de leads que viram clientes. Dobrar a conversão = dobrar o faturamento sem novos leads.',
+  ciclo:'Dias até fechar uma venda. Ciclo longo = custo alto de aquisição.',
+  recomp:'% de clientes que voltaram a comprar. Reter é 5x mais barato que adquirir.',
+  nps:'Satisfação dos clientes de 0-100. Acima de 50 é bom; acima de 70, excelente.',
+  integ:'Integração entre sistemas. Sistemas isolados causam retrabalho e erros.',
+  backup:'Segurança dos dados. Sem backup, um incidente pode paralisar a empresa.',
+  auto_tec:'Automação com tecnologia. Cada processo automatizado libera horas produtivas.',
+  infra:'Qualidade dos equipamentos. Infraestrutura obsoleta = gargalo de crescimento.',
+};
+
+document.addEventListener('mouseover', e => {
+  const card = e.target.closest('[data-kpi-tip]');
+  if(!card) return;
+  let box = document.getElementById('kpi-tooltip-box');
+  if(!box){box=document.createElement('div');box.id='kpi-tooltip-box';box.className='kpi-tooltip';document.body.appendChild(box);}
+  box.textContent = card.dataset.kpiTip;
+  box.style.display = 'block';
+});
+document.addEventListener('mousemove', e => {
+  const box = document.getElementById('kpi-tooltip-box');
+  if(box&&box.style.display==='block'){box.style.left=(e.clientX+14)+'px';box.style.top=(e.clientY+14)+'px';}
+});
+document.addEventListener('mouseout', e => {
+  if(e.target.closest('[data-kpi-tip]')){const box=document.getElementById('kpi-tooltip-box');if(box)box.style.display='none';}
+});
 
 async function initSupabase(){
   if(SUPABASE_URL==='COLE_SUA_URL_AQUI'||!SUPABASE_URL){
@@ -920,7 +985,7 @@ function criarCliente(){
 
   document.getElementById('gc-result').innerHTML=`
     <div class="link-box">
-      <div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:6px">${nome} · ${ramo}</div>
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px">${nome} · ${ramo}</div>
       <div class="link-url">${link}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-blue btn-sm" onclick="copiarLink('${link}')">📋 Copiar Link</button>
@@ -1042,7 +1107,7 @@ function renderClientes(){
   el.innerHTML=CLIENTES.map(c=>`
     <div class="monitor-row" style="flex-wrap:wrap">
       <div style="flex:1;min-width:120px">
-        <div style="font-size:12px;font-weight:600;color:#fff">${c.nome}</div>
+        <div style="font-size:12px;font-weight:600;color:#1A1A1A">${c.nome}</div>
         <div style="font-size:10px;color:var(--muted)">${c.ramo} · ${c.periodo}m · ${c.criado}</div>
       </div>
       <span class="badge ${c.status==='Preenchido'?'b-green':c.status==='Em andamento'?'b-yellow':'b-red'}">${c.status}</span>
@@ -1071,7 +1136,7 @@ function renderMonitor(){
       const cobLabel=diasCob!==null?'Última cobrança há '+diasCob+'d':'Nunca cobrado';
       return '<div class="monitor-row" style="flex-wrap:wrap;background:var(--yellow-bg);border-radius:8px;padding:8px 10px;margin-bottom:4px">'
         +'<div style="flex:1;min-width:120px">'
-        +'<div style="font-size:12px;font-weight:600;color:#fff">'+c.nome+'</div>'
+        +'<div style="font-size:12px;font-weight:600;color:#1A1A1A">'+c.nome+'</div>'
         +'<div style="font-size:10px;color:var(--muted)">Criado há '+diasLabel+' · '+cobLabel+'</div>'
         +'</div>'
         +'<button class="btn-ghost" style="color:#4CAF82;border-color:#204A30;font-size:10px;cursor:pointer" onclick="cobrarClienteZapStr(`'+c.id+'`)">💬 Cobrar no Zap</button>'
@@ -1085,7 +1150,7 @@ function renderMonitor(){
     MONITOR.slice(-15).reverse().map(function(m){
       return '<div class="monitor-row">'
         +'<div style="font-size:10px;color:var(--muted);min-width:80px">'+(m.data||'')+' '+(m.hora||'')+'</div>'
-        +'<div style="flex:1;font-size:11px;color:#ddd"><span style="font-weight:600">'+m.nome+'</span> — '+m.acao+'</div>'
+        +'<div style="flex:1;font-size:11px;color:#333"><span style="font-weight:600">'+m.nome+'</span> — '+m.acao+'</div>'
         +'</div>';
     }).join(''):'';
   el.innerHTML=pendHtml+atividadeHtml;
@@ -1176,7 +1241,7 @@ function buildFormSections(){
       <div class="area-header">
         <div class="area-icon" style="background:${d.bg}">${d.icon}</div>
         <div>
-          <div style="font-size:14px;font-weight:600;color:#fff">${d.label}</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text)">${d.label}</div>
           <div style="font-size:10px;color:var(--muted)">Informe os dados dos últimos ${periodo} meses</div>
         </div>
       </div>`;
@@ -1473,6 +1538,88 @@ function exportarBase(){
 // ============================================================
 // DASHBOARD
 // ============================================================
+
+function exportarClienteExcel(){
+  const nome = gS('base-search') || gS('dash-cliente');
+  if(!nome){
+    // Mostrar modal para selecionar cliente
+    const nomes = [...new Set(DB.map(r=>r.nome))];
+    if(!nomes.length){alert('Nenhum dado no banco.');return;}
+    const sel = prompt('Digite o nome do cliente para exportar:\n\n'+nomes.join('\n'));
+    if(!sel) return;
+    exportarExcelCliente(sel.trim());
+  } else {
+    exportarExcelCliente(nome);
+  }
+}
+
+function exportarExcelCliente(nome){
+  if(typeof XLSX === 'undefined'){alert('Aguarde o carregamento...');return;}
+  const rows = DB.filter(r=>r.nome===nome&&!r._meta);
+  if(!rows.length){alert('Nenhum dado encontrado para: '+nome);return;}
+  const meta = DB.find(r=>r.nome===nome&&r._meta)||{};
+  const wb = XLSX.utils.book_new();
+
+  // Aba Resumo
+  const resumo = [
+    ['DIAGNÓSTICO ARTYVA — '+nome.toUpperCase()],
+    ['Gerado em', new Date().toLocaleDateString('pt-BR')],
+    ['Ramo', rows[0].ramo||''],
+    ['Cidade', rows[0].cidade||''],
+    ['Funcionários', rows[0].func||''],
+    ['Período', rows[0].periodo||'', 'meses'],
+    [],
+    ['Desafios', meta.desafios||''],
+    ['Objetivos', meta.objetivos||''],
+    ['Pontos fortes', meta.pontos||''],
+  ];
+  const wsR = XLSX.utils.aoa_to_sheet(resumo);
+  wsR['!cols'] = [{wch:20},{wch:60},{wch:15}];
+  XLSX.utils.book_append_sheet(wb, wsR, 'Resumo');
+
+  // Abas por departamento
+  const depKeys = [...new Set(rows.map(r=>r.dep))];
+  depKeys.forEach(dep => {
+    const depRows = rows.filter(r=>r.dep===dep);
+    const meses = [...new Set(depRows.map(r=>r.mes))].sort((a,b)=>a-b);
+    const kpis = [...new Set(depRows.map(r=>r.kpi))];
+    const header = ['KPI', 'Chave', ...meses.map(m=>'Mês '+m), 'Desvio', 'Ref.'];
+    const data = kpis.map(kpi => {
+      const kpiRows = depRows.filter(r=>r.kpi===kpi);
+      const vals = meses.map(m => {
+        const r = kpiRows.find(x=>x.mes===m);
+        return r ? (r.val===-1?'Não sabe':r.val===-2?'N/A':r.val) : '';
+      });
+      const k = kpiRows[0]?.k||'';
+      const ref = kpiRows[0]?.ref||'';
+      const desvio = kpiRows.some(r=>r.desvio==='SIM')?'SIM':'NÃO';
+      return [kpi, k, ...vals, desvio, ref];
+    });
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data]);
+    ws['!cols'] = [{wch:35},{wch:14},...meses.map(()=>({wch:12})),{wch:10},{wch:10}];
+    // Destacar desvios em vermelho
+    XLSX.utils.book_append_sheet(wb, ws, dep.substring(0,31));
+  });
+
+  // Aba consolidada
+  const allHeader = ['Departamento','KPI','Chave','Mês','Valor','Desvio','Ref.','Peso'];
+  const allData = rows.map(r=>[r.dep,r.kpi,r.k,r.mes,r.val===-1?'Não sabe':r.val===-2?'N/A':r.val,r.desvio,r.ref||'',r.peso||'']);
+  const wsAll = XLSX.utils.aoa_to_sheet([allHeader,...allData]);
+  wsAll['!cols'] = [{wch:16},{wch:35},{wch:14},{wch:8},{wch:12},{wch:10},{wch:10},{wch:8}];
+  XLSX.utils.book_append_sheet(wb, wsAll, 'Dados Completos');
+
+  const wopts = {bookType:'xlsx',bookSST:false,type:'binary'};
+  const wbout = XLSX.write(wb, wopts);
+  const buf = new ArrayBuffer(wbout.length);
+  const view = new Uint8Array(buf);
+  for(let i=0;i<wbout.length;i++) view[i]=wbout.charCodeAt(i)&0xFF;
+  const blob = new Blob([buf],{type:'application/octet-stream'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'diagnostico_artyva_'+nome.replace(/[^a-zA-Z0-9]/g,'_')+'.xlsx';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(a.href);},1000);
+}
 function selDashPeriod(btn,p){
   document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');dashPeriodo=p;renderDashboard();
@@ -1521,11 +1668,21 @@ function makeKpiCard(label,val,ref,inv,tipo,trend){
   const trendIcon=trend>5?'↑':trend<-5?'↓':'→';
   const trendColor=trend>5?(inv?'var(--red)':'var(--green)'):trend<-5?(inv?'var(--green)':'var(--red)'):'var(--muted)';
   const pct=ref?Math.min(100,Math.round((inv?ref/Math.max(val,1):val/ref)*100)):50;
-  return `<div class="kpi-card">
-    <div class="kpi-val" style="color:${c}">${fv}</div>
-    <div class="kpi-label">${label}</div>
-    <div style="font-size:10px;color:${trendColor};margin-top:3px">${trendIcon} ${Math.abs(trend).toFixed(1)}%</div>
+  const status=c==='var(--green)'?'✓ Ok':c==='var(--yellow)'?'Atenção':'Crítico';
+  const statusBg=c==='var(--green)'?'var(--green-bg)':c==='var(--yellow)'?'var(--yellow-bg)':'var(--red-bg)';
+  const refLabel=ref?(inv?`Meta: ≤${ref}`:`Meta: ${ref>1000?'R$ '+ref.toLocaleString('pt-BR'):ref}`):'';
+  const tipText = KPI_TIPS[label.toLowerCase().replace(/[^a-z]/g,'')] || KPI_TIPS[Object.keys(KPI_TIPS).find(k=>label.toLowerCase().includes(k))||''||''] || '';
+  return `<div class="kpi-card" data-kpi-tip="${tipText||label}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div class="kpi-val" style="color:${c}">${fv}</div>
+      <span style="font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:${statusBg};color:${c}">${status}</span>
+    </div>
+    <div class="kpi-label" style="font-size:11px;color:var(--muted);margin-bottom:8px">${label}</div>
     <div class="kpi-prog"><div class="kpi-prog-bar" style="width:${pct}%;background:${c}"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:5px">
+      <span style="font-size:9px;color:var(--muted)">${refLabel}</span>
+      <span style="font-size:10px;color:${trendColor}">${trendIcon} ${trend!==0?Math.abs(trend).toFixed(1)+'%':''}</span>
+    </div>
   </div>`;
 }
 
@@ -1582,14 +1739,42 @@ function renderDashboard(){
   // INSIGHTS
   const desvios=Object.values(agg).filter(a=>a.ref&&isDesvio(a.val,a.ref,a.inv));
   let insightsHtml='';
+  // Calcular score geral
+  const allKpis=Object.values(agg).filter(a=>a.ref&&a.val>0);
+  const totalDevs=allKpis.filter(a=>isDesvio(a.val,a.ref,a.inv));
+  const score=allKpis.length?Math.round(100-(totalDevs.length/allKpis.length)*100):80;
+  const scoreColor=score>=85?'var(--green)':score>=60?'var(--yellow)':'var(--red)';
+  const scoreLabel=score>=85?'Saudável':score>=70?'Bom':score>=50?'Atenção':score>=30?'Crítico':'Emergência';
+  const scoreBg=score>=85?'var(--green-bg)':score>=60?'var(--yellow-bg)':'var(--red-bg)';
+  // Calcular perdas estimadas
+  const fat=agg['fin-fat']?.val||0;
+  const inadimExtra=agg['fin-inadim']?Math.max(0,(agg['fin-inadim'].val-5)/100*fat):0;
+  const retrabExtra=agg['ops-retrab']?Math.max(0,(agg['ops-retrab'].val-5)/100*(fat*0.3)):0;
+  const totalPerda=inadimExtra+retrabExtra;
+  const perdaHtml=totalPerda>500?`<div style="background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);display:flex;align-items:center;gap:8px;margin-bottom:10px"><strong>Perda estimada/mês:</strong> R$ ${totalPerda.toLocaleString('pt-BR',{maximumFractionDigits:0})} · ${totalDevs.length} desvio(s) detectado(s)</div>`:'';
   if(desvios.length>0){
-    insightsHtml=desvios.slice(0,3).map(d=>`
-      <div class="insight">
-        <div class="insight-title">⚠️ Desvio detectado — ${d.dep} · ${d.kpi}</div>
-        <div style="font-size:11px;color:#ccc">Valor atual: <strong style="color:${d.inv?'var(--red)':'var(--red)'}">${typeof d.val==='number'&&d.val>1000?'R$ '+d.val.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):d.val.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}</strong> · Ref: ${d.ref} · Tendência: <span style="color:${d.trend!==0?(d.trend>0?'var(--green)':'var(--red)'):'var(--muted)'}">${d.trend!==0?(d.trend>5?'↑':d.trend<-5?'↓':'→'):'→'} ${d.trend!==0?Math.abs(d.trend||0).toFixed(1)+'%':'período único'}</span></div>
+    insightsHtml=`
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:${scoreBg};border:1px solid ${scoreColor==='var(--green)'?'var(--green-border)':scoreColor==='var(--yellow)'?'var(--yellow-border)':'var(--red-border)'};border-radius:10px;margin-bottom:12px">
+      <div style="text-align:center;min-width:60px">
+        <div style="font-size:28px;font-weight:700;color:${scoreColor};line-height:1">${score}</div>
+        <div style="font-size:9px;color:var(--muted);font-weight:600">/ 100</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:${scoreColor};margin-bottom:3px">${scoreLabel}</div>
+        <div style="font-size:11px;color:var(--muted)">${totalDevs.length} desvio(s) identificado(s) · ${allKpis.length} indicadores avaliados</div>
+      </div>
+    </div>
+    ${perdaHtml}
+    `+desvios.slice(0,3).map(d=>`
+      <div class="insight" style="border-left:3px solid var(--red)">
+        <div class="insight-title" style="color:var(--red)">⚠ Desvio — ${d.dep} · ${d.kpi}</div>
+        <div style="font-size:11px;color:var(--muted)">Valor atual: <strong style="color:var(--red)">${typeof d.val==='number'&&d.val>1000?'R$ '+d.val.toLocaleString('pt-BR',{maximumFractionDigits:0}):d.val.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}</strong> · Meta: ${d.ref} · <span style="color:${d.trend!==0?(d.trend>0?'var(--green)':'var(--red)'):'var(--muted)'}">${d.trend!==0?(d.trend>5?'↑ Melhorando':d.trend<-5?'↓ Piorando':'→ Estável'):'→ Período único'}</span></div>
       </div>`).join('');
   } else {
-    insightsHtml='<div class="alert alert-ok">✓ Nenhum desvio crítico identificado no período selecionado.</div>';
+    insightsHtml=`<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:10px;margin-bottom:12px">
+      <div style="text-align:center;min-width:60px"><div style="font-size:28px;font-weight:700;color:var(--green);line-height:1">${score}</div><div style="font-size:9px;color:var(--muted);font-weight:600">/ 100</div></div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:3px">Saudável</div><div style="font-size:11px;color:var(--muted)">Nenhum desvio crítico identificado no período selecionado.</div></div>
+    </div>`;
   }
   document.getElementById('dash-insights').innerHTML=insightsHtml;
 
@@ -1609,13 +1794,13 @@ function renderDashboard(){
     charts['chart-fin']=new Chart(ctx,{type:'line',data:{
       labels:finMeses.map(m=>`M${m}`),
       datasets:[
-        {label:'Faturamento (R$)',data:fatVals,borderColor:'#5B9CF6',backgroundColor:'rgba(91,156,246,.1)',fill:true,tension:.4,yAxisID:'y'},
-        {label:'Margem líquida (%)',data:mlVals,borderColor:'#4CAF82',backgroundColor:'rgba(76,175,130,.1)',fill:true,tension:.4,yAxisID:'y1'},
+        {label:'Faturamento (R$)',data:fatVals,borderColor:'#2B6CB0',backgroundColor:'rgba(43,108,176,.08)',fill:true,tension:.4,yAxisID:'y',pointRadius:5,pointHoverRadius:7},
+        {label:'Margem líquida (%)',data:mlVals,borderColor:'#1E7A4E',backgroundColor:'rgba(30,122,78,.08)',fill:true,tension:.4,yAxisID:'y1',pointRadius:5,pointHoverRadius:7},
       ]
-    },options:{responsive:true,plugins:{legend:{labels:{color:'#999',font:{size:11}}}},scales:{
-      x:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}},
-      y:{ticks:{color:'#666',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}},
-      y1:{position:'right',ticks:{color:'#4CAF82',callback:v=>v+'%'},grid:{display:false}}
+    },options:{responsive:true,plugins:{legend:{labels:{color:'#555',font:{size:11}}}},scales:{
+      x:{ticks:{color:'#444'},grid:{color:'#EBEBEB'}},
+      y:{ticks:{color:'#555',callback:v=>fmtBRL(v)},grid:{color:'#EBEBEB'}},
+      y1:{position:'right',ticks:{color:'#1E7A4E',callback:v=>v+'%'},grid:{display:false}}
     }}});
   }
 
@@ -1631,9 +1816,9 @@ function renderDashboard(){
     charts['chart-radar']=new Chart(rCtx,{type:'radar',data:{
       labels:Object.values(DEP).map(d=>d.label),
       datasets:[{label:'Score',data:depScores,backgroundColor:'rgba(91,156,246,.15)',borderColor:'#5B9CF6',pointBackgroundColor:'#5B9CF6',pointRadius:4}]
-    },options:{plugins:{legend:{labels:{color:'#999'}}},scales:{r:{
-      ticks:{color:'#666',backdropColor:'transparent',stepSize:20},
-      grid:{color:'#333'},pointLabels:{color:'#aaa',font:{size:11}},min:0,max:100
+    },options:{plugins:{legend:{labels:{color:'#555'}}},scales:{r:{
+      ticks:{color:'#555',backdropColor:'transparent',stepSize:20},
+      grid:{color:'#E0E0E0'},pointLabels:{color:'#555',font:{size:11}},min:0,max:100
     }}}});
   }
 
@@ -1675,8 +1860,8 @@ function renderTrendChart(nome,allRows,selMeses){
   const tCtx=document.getElementById('chart-trend');
   if(tCtx){
     charts['chart-trend']=new Chart(tCtx,{type:'line',data:{labels:selMeses.map(m=>`M${m}`),datasets},
-      options:{responsive:true,plugins:{legend:{labels:{color:'#999',font:{size:11}}}},
-        scales:{x:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}}}}});
+      options:{responsive:true,plugins:{legend:{labels:{color:'#555',font:{size:11}}}},
+        scales:{x:{ticks:{color:'#555'},grid:{color:'#EBEBEB'}},y:{ticks:{color:'#555'},grid:{color:'#EBEBEB'}}}}});
   }
 }
 
@@ -1734,7 +1919,7 @@ function buildCenInputs(nome,allRows,mes){
   ];
   document.getElementById('cen-sliders').innerHTML=sliders.map(s=>`
     <div>
-      <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">${s.lbl}: <span id="${s.id}-val" style="color:#fff">${s.val}${s.unit}</span></label>
+      <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">${s.lbl}: <span id="${s.id}-val" style="color:var(--text)">${s.val}${s.unit}</span></label>
       <input type="range" min="${s.min}" max="${s.max}" value="${s.val}" step="1" id="${s.id}" oninput="document.getElementById('${s.id}-val').textContent=this.value+'${s.unit}';updateCenCharts('${nome}')">
     </div>`).join('');
 
@@ -1759,8 +1944,8 @@ function updateCenCharts(nome){
   const ctx=document.getElementById('cen-chart-fin');
   if(ctx){charts['cen-chart-fin']=new Chart(ctx,{type:'bar',
     data:{labels:meses,datasets:[{label:'Faturamento projetado (R$)',data:projecao,backgroundColor:projecao.map((_,i)=>i===0?'rgba(91,156,246,.5)':'rgba(76,175,130,.7)'),borderRadius:6}]},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#999',font:{size:11}}}},
-      scales:{x:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#666',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}}}}});}
+    options:{responsive:true,plugins:{legend:{labels:{color:'#555',font:{size:11}}}},
+      scales:{x:{ticks:{color:'#444'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#444',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}}}}});}
 
   const lucroAtual=fat*ml/100;
   const lucroProj=fat*(1+slFat/100)*(ml+(slCusto*0.3))/100;
@@ -1771,8 +1956,8 @@ function updateCenCharts(nome){
     data:{labels:['Atual','Cenário projetado'],datasets:[
       {label:'Lucro líquido (R$)',data:[lucroAtual,lucroProj],backgroundColor:['rgba(91,156,246,.6)','rgba(76,175,130,.7)'],borderRadius:6},
     ]},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#999',font:{size:11}}}},
-      scales:{x:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#666',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}}}}});}
+    options:{responsive:true,plugins:{legend:{labels:{color:'#555',font:{size:11}}}},
+      scales:{x:{ticks:{color:'#444'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#444',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}}}}});}
 
   // Impact chart
   destroyChart('cen-chart-impact');
@@ -1783,8 +1968,8 @@ function updateCenCharts(nome){
         {label:'Sem melhorias',data:[fat,fat,fat,fat,fat,fat,fat],borderColor:'#E05252',borderDash:[5,5],tension:.1,pointRadius:0},
         {label:'Com melhorias Artyva',data:[fat,fat*1.02,fat*1.05,fat*(1+slFat/200),fat*(1+slFat/150),fat*(1+slFat/100),fat*(1+slFat/80)],borderColor:'#4CAF82',backgroundColor:'rgba(76,175,130,.1)',fill:true,tension:.4},
       ]},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#999',font:{size:11}}}},
-      scales:{x:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#666',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}}}}});}
+    options:{responsive:true,plugins:{legend:{labels:{color:'#555',font:{size:11}}}},
+      scales:{x:{ticks:{color:'#444'},grid:{color:'#2A2A2A'}},y:{ticks:{color:'#444',callback:v=>fmtBRL(v)},grid:{color:'#2A2A2A'}}}}});}
 
   // Result cards
   document.getElementById('cen-resultado-cards').innerHTML=`
@@ -1835,8 +2020,8 @@ function renderMercado(){
       {label:'Cliente (% ref.)',data:clientVals,backgroundColor:clientVals.map(v=>v>=80?'rgba(76,175,130,.7)':v>=60?'rgba(240,192,64,.7)':'rgba(224,82,82,.7)'),borderRadius:5},
       {label:'Mercado (100%)',data:kpis.map(()=>100),type:'line',borderColor:'#5B9CF6',borderDash:[4,4],pointRadius:0,fill:false}
     ]},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#999',font:{size:11}}}},
-      scales:{x:{ticks:{color:'#666'},grid:{color:'#2A2A2A'}},y:{max:160,ticks:{color:'#666',callback:v=>v+'%'},grid:{color:'#2A2A2A'}}}}});}
+    options:{responsive:true,plugins:{legend:{labels:{color:'#555',font:{size:11}}}},
+      scales:{x:{ticks:{color:'#444'},grid:{color:'#2A2A2A'}},y:{max:160,ticks:{color:'#444',callback:v=>v+'%'},grid:{color:'#2A2A2A'}}}}});}
 
   destroyChart('chart-merc-radar');
   const rCtx=document.getElementById('chart-merc-radar');
@@ -1845,8 +2030,8 @@ function renderMercado(){
       {label:'Cliente',data:clientVals,backgroundColor:'rgba(91,156,246,.15)',borderColor:'#5B9CF6',pointBackgroundColor:'#5B9CF6'},
       {label:'Mercado',data:kpis.map(()=>100),backgroundColor:'rgba(240,192,64,.1)',borderColor:'#F0C040',borderDash:[4,4]}
     ]},
-    options:{plugins:{legend:{labels:{color:'#999'}}},scales:{r:{
-      ticks:{color:'#666',backdropColor:'transparent'},grid:{color:'#333'},pointLabels:{color:'#aaa',font:{size:10}},min:0,max:160
+    options:{plugins:{legend:{labels:{color:'#555'}}},scales:{r:{
+      ticks:{color:'#444',backdropColor:'transparent'},grid:{color:'#333'},pointLabels:{color:'#666',font:{size:10}},min:0,max:160
     }}}});}
 
   const alertas=kpis.filter(kp=>{const v=getV(kp.k);const r=bench[kp.k]||1;return kColor(v,r,kp.inv)==='var(--red)';});
@@ -1956,16 +2141,16 @@ function buildDiagContent(nome){
   }).join('');
 
   document.getElementById('diag-content').innerHTML=`
-    <div class="sec" style="background:linear-gradient(135deg,#1A2440,#1A1A2A);border-color:#3A4A6A">
+    <div class="sec" style="background:linear-gradient(135deg,var(--blue-bg),var(--green-bg));border-color:var(--blue-border)">
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <div style="text-align:center">
+        <div style="text-align:center;background:#fff;border-radius:12px;padding:14px 18px;border:1px solid var(--border)">
           <div style="font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;color:${scoreColor};line-height:1">${score}</div>
           <div style="font-size:11px;color:var(--muted)">Score de saúde</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">${nome}</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">${nome}</div>
           <div style="font-size:12px;color:var(--muted)">${rows[0]?.ramo} · ${meta.periodo||rows[0]?.periodo} meses analisados · ${new Date().toLocaleDateString('pt-BR')}</div>
-          ${meta.desafios?`<div style="font-size:11px;color:#bbb;margin-top:6px">📌 ${meta.desafios.substring(0,150)}${meta.desafios.length>150?'...':''}</div>`:''}
+          ${meta.desafios?`<div style="font-size:11px;color:var(--muted);margin-top:6px;padding:8px;background:rgba(255,255,255,0.7);border-radius:6px">📌 ${meta.desafios.substring(0,150)}${meta.desafios.length>150?'...':''}</div>`:''}
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <div class="kpi-card" style="min-width:80px"><div class="kpi-val" style="color:var(--red)">${lista.filter(r=>r.peso>=4).length}</div><div class="kpi-label">Críticos</div></div>
@@ -1985,8 +2170,8 @@ function buildDiagContent(nome){
         return `<div class="rank-row">
           <div class="rank-num" style="background:${i<3?'var(--red-bg)':i<6?'var(--yellow-bg)':'var(--green-bg)'};color:${i<3?'var(--red)':i<6?'var(--yellow)':'var(--green)'}">${i+1}</div>
           <div style="flex:1">
-            <div style="font-size:12px;font-weight:600;color:#fff">${acao}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">${r.dep} · KPI: ${r.kpi} · Peso ${r.peso} · Estimativa: ${h}h</div>
+            <div style="font-size:12px;font-weight:600;color:#1A1A1A">${acao}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${r.dep} · ${r.kpi} · ${h}h estimadas</div>
           </div>
           <span class="badge ${i<3?'b-red':i<6?'b-yellow':'b-green'}">${i<3?'CRÍTICO':i<6?'MÉDIO':'BAIXO'}</span>
         </div>`;
@@ -2008,84 +2193,268 @@ function buildDiagContent(nome){
       </div>
     </div>
 
-    ${meta.objetivos?`<div class="insight"><div class="insight-title">🎯 Objetivos declarados pelo cliente</div><div style="font-size:11px;color:#ccc">${meta.objetivos}</div></div>`:''}
-    ${meta.pontos?`<div class="insight"><div class="insight-title">✅ Pontos fortes identificados</div><div style="font-size:11px;color:#ccc">${meta.pontos}</div></div>`:''}
+    ${meta.objetivos?`<div class="insight"><div class="insight-title">🎯 Objetivos declarados pelo cliente</div><div style="font-size:11px;color:var(--muted)">${meta.objetivos}</div></div>`:''}
+    ${meta.pontos?`<div class="insight"><div class="insight-title">✅ Pontos fortes identificados</div><div style="font-size:11px;color:var(--muted)">${meta.pontos}</div></div>`:''}
     ${meta.notas?`<div class="sec"><div class="sec-head">📝 Notas internas do consultor</div><div style="font-size:12px;color:var(--muted);font-style:italic">${meta.notas}</div></div>`:''}`;
 }
 
 // ============================================================
 // RELATÓRIO
 // ============================================================
+function gerarRelatorioIA(){
+  const nome = gS('rel-cliente');
+  if(!nome){alert('Selecione um cliente primeiro.');return;}
+  const rows = getClientRows(nome);
+  if(!rows.length){alert('Sem dados para este cliente. Certifique-se que o formulário foi preenchido.');return;}
+
+  const loading = document.getElementById('rel-ia-loading');
+  const prog = document.getElementById('rel-ia-prog');
+  const el = document.getElementById('rel-content');
+  loading.style.display = 'block';
+  el.innerHTML = '';
+
+  // Animação de progresso
+  let p = 0;
+  const interval = setInterval(()=>{p=Math.min(p+2,90);if(prog)prog.style.width=p+'%';},100);
+
+  // Montar contexto
+  const meta = getClientMeta(nome);
+  const desvios = rows.filter(r=>r.desvio==='SIM').reduce((acc,r)=>{if(!acc[r.k]||acc[r.k].peso<r.peso)acc[r.k]={...r};return acc;},{});
+  const lista = Object.values(desvios).sort((a,b)=>b.peso-a.peso);
+  const fatRow = rows.filter(r=>r.k==='fat');
+  const fat = fatRow.length?fatRow.reduce((s,r)=>s+r.val,0)/fatRow.length:0;
+  const ramo = rows[0]?.ramo||'não informado';
+  const periodo = meta.periodo||rows[0]?.periodo||3;
+  const totalRows = [...new Set(rows.map(r=>r.k))].length;
+  const score = Math.max(0,Math.round(100-(lista.length/totalRows)*100));
+
+  // Calcular perdas por desvio
+  const perdas = {};
+  lista.forEach(r=>{
+    if(r.k==='inadim'&&fat) perdas['Inadimplência'] = Math.round(Math.max(0,(r.val-5)/100*fat));
+    if(r.k==='retrab'&&fat) perdas['Retrabalho operacional'] = Math.round(Math.max(0,(r.val-5)/100*fat*0.3));
+    if(r.k==='turnover') perdas['Turnover'] = Math.round((r.val/100)*3*3500);
+    if(r.k==='ruptura'&&fat) perdas['Ruptura de estoque'] = Math.round(Math.max(0,(r.val-5)/100*fat*0.2));
+  });
+  const totalPerdas = Object.values(perdas).reduce((s,v)=>s+v,0);
+
+  const kpisDetalhados = lista.slice(0,8).map(r=>`- ${r.dep} | ${r.kpi}: valor atual ${r.val<0?'Sem controle':r.val} (referência do setor: ${r.ref||'n/d'})`).join('\n');
+  const perdasTexto = Object.entries(perdas).map(([k,v])=>`- ${k}: R$ ${v.toLocaleString('pt-BR')}/mês`).join('\n');
+
+  const prompt = `Você é uma consultora de gestão empresarial especialista em pequenos e médios negócios brasileiros, com profundo conhecimento em neurociência da persuasão e vendas consultivas.
+
+DADOS DO CLIENTE:
+- Empresa: ${nome}
+- Setor: ${ramo}
+- Período analisado: ${periodo} meses
+- Faturamento médio mensal: R$ ${fat>0?fat.toLocaleString('pt-BR',{maximumFractionDigits:0}):'não informado'}
+- Score de saúde: ${score}/100
+- Total de desvios identificados: ${lista.length}
+
+PRINCIPAIS DESVIOS:
+${kpisDetalhados}
+
+PERDAS ESTIMADAS MENSAIS:
+${perdasTexto||'Dados insuficientes para calcular'}
+Total estimado: R$ ${totalPerdas.toLocaleString('pt-BR')}/mês
+
+DESAFIOS DECLARADOS PELO CLIENTE: ${meta.desafios||'não informado'}
+OBJETIVOS PARA 12 MESES: ${meta.objetivos||'não informado'}
+PONTOS FORTES: ${meta.pontos||'não informado'}
+
+Crie um relatório de diagnóstico COMPLETO e IMPACTANTE com as seguintes seções em HTML:
+
+1. **SITUAÇÃO ATUAL** — Descreva de forma direta e empática a realidade do negócio. Use os números reais. Mostre o cenário atual vs o potencial.
+
+2. **O QUE ESTÁ CUSTANDO** — Com base nos desvios, calcule e mostre em R$ o que cada problema está custando por mês e por ano. Seja específico e use os dados reais. Mostre o custo de NÃO agir.
+
+3. **BENCHMARKS DO SETOR** — Compare os indicadores com empresas saudáveis do setor ${ramo}. Mostre onde está a empresa em relação ao mercado.
+
+4. **OPORTUNIDADES IDENTIFICADAS** — Liste as 3-5 maiores oportunidades de crescimento específicas para este negócio. Seja concreto com os ganhos potenciais em R$.
+
+5. **PLANO DE TRANSFORMAÇÃO** — 90 dias de ações priorizadas. O que fazer primeiro, segundo e terceiro para mudar o cenário.
+
+6. **O QUE A ARTYVA ENTREGA** — Como a consultoria da Artyva pode resolver cada um desses pontos. Seja consultivo, mostre ROI claro. Destaque que somos acessíveis e democratizamos o acesso à gestão profissional para pequenos negócios.
+
+Escreva de forma envolvente, com dados reais, provocando urgência sem ser alarmista. Use neurociência: mostre a dor do status quo, a visão do futuro possível, e o caminho claro. O cliente deve terminar de ler sentindo que NÃO contratar seria o maior erro.
+
+Retorne APENAS HTML puro (sem markdown, sem \`\`\`html) com estilos inline. Use a paleta: rosa #FF3366, verde #1E7A4E, texto escuro #1A1A1A, fundo branco #FFFFFF, cinza suave #F5F4F2.`;
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:4000,
+      messages:[{role:'user',content:prompt}]
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    clearInterval(interval);
+    if(prog) prog.style.width='100%';
+    setTimeout(()=>{
+      loading.style.display='none';
+      const html = data.content?.[0]?.text||'';
+      if(!html){el.innerHTML='<div class="alert alert-crit">Erro ao gerar diagnóstico. Tente novamente.</div>';return;}
+      // Limpar possível markdown
+      const clean = html.replace(/```html/g,'').replace(/```/g,'').trim();
+      el.innerHTML = clean + `
+        <div style="margin-top:24px;text-align:center;padding:20px;border-top:1px solid #E0DDD8">
+          <div style="font-size:13px;font-weight:600;color:#FF3366;margin-bottom:3px">Artyva Gestão Administrativa</div>
+          <div style="font-size:11px;color:#888">Gestão que gera resultados · +55 11 2368-4091</div>
+          <button class="btn btn-outline btn-sm" onclick="window.print()" style="margin-top:12px">🖨 Imprimir / Salvar PDF</button>
+        </div>`;
+    }, 500);
+  })
+  .catch(err=>{
+    clearInterval(interval);
+    loading.style.display='none';
+    el.innerHTML=`<div class="alert alert-crit">Erro: ${err.message}</div>`;
+  });
+}
+
 function renderRelatorio(){
   const nome=gS('rel-cliente');
   const el=document.getElementById('rel-content');
   if(!nome){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)">Selecione um cliente.</div>';return;}
   const rows=getClientRows(nome);
   const meta=getClientMeta(nome);
-  if(!rows.length){el.innerHTML='<div class="alert alert-info">Salve o diagnóstico primeiro.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="alert alert-info">Sem dados. Salve o formulário primeiro.</div>';return;}
   const desvios=rows.filter(r=>r.desvio==='SIM').reduce((acc,r)=>{if(!acc[r.k]||acc[r.k].peso<r.peso)acc[r.k]={...r};return acc;},{});
   const lista=Object.values(desvios).sort((a,b)=>b.peso-a.peso);
-  const score=Math.max(0,Math.round(100-(lista.length/Math.max([...new Set(rows.map(r=>r.k))].length,1))*100));
-  const scoreColor=score>=70?'var(--green)':score>=45?'var(--yellow)':'var(--red)';
+  const totalRows=[...new Set(rows.map(r=>r.k))].length;
+  const score=Math.max(0,Math.round(100-(lista.length/totalRows)*100));
+  const scoreColor=score>=70?'#1E7A4E':score>=45?'#C9860A':'#D63B3B';
+  const scoreLabel=score>=85?'Saudável':score>=70?'Bom':score>=50?'Atenção':score>=30?'Crítico':'Emergência';
+  // Calcular perdas estimadas
+  const fatRow=rows.filter(r=>r.k==='fat'&&r.dep==='Financeiro');
+  const fat=fatRow.length?fatRow.reduce((s,r)=>s+r.val,0)/fatRow.length:0;
+  const inadimRow=rows.filter(r=>r.k==='inadim');
+  const inadimVal=inadimRow.length?inadimRow.reduce((s,r)=>s+r.val,0)/inadimRow.length:0;
+  const retrabRow=rows.filter(r=>r.k==='retrab');
+  const retrabVal=retrabRow.length?retrabRow.reduce((s,r)=>s+r.val,0)/retrabRow.length:0;
+  const perdaInadim=Math.max(0,(inadimVal-5)/100*fat);
+  const perdaRetrab=Math.max(0,(retrabVal-5)/100*fat*0.3);
+  const perdaTotal=perdaInadim+perdaRetrab;
+  const potRecuperacao=perdaTotal*0.8;
+  const ramo=rows[0]?.ramo||'';
+  const periodo=meta.periodo||rows[0]?.periodo||3;
+  const hoje=new Date().toLocaleDateString('pt-BR');
 
-  el.innerHTML=`<div style="background:#252525;border:1px solid var(--border);border-radius:14px;padding:28px;max-width:780px;margin:0 auto">
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border)">
-      <div style="width:44px;height:44px;background:var(--brand-pink);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:20px;font-family:'Space Grotesk',sans-serif">A</div>
-      <div>
-        <div style="font-size:16px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif">Relatório de Diagnóstico Empresarial</div>
-        <div style="font-size:11px;color:var(--muted)">Artyva Gestão Administrativa · Gestão que gera resultados · ${new Date().toLocaleDateString('pt-BR')}</div>
-      </div>
-      <div style="margin-left:auto;text-align:right">
-        <div style="font-size:14px;font-weight:600;color:#fff">${nome}</div>
-        <div style="font-size:11px;color:var(--muted)">${rows[0]?.ramo}</div>
+  el.innerHTML=`
+  <div style="max-width:700px;margin:0 auto;font-family:'Inter',sans-serif">
+
+    <!-- Cabeçalho -->
+    <div style="background:linear-gradient(135deg,#FF3366,#C0284D);border-radius:14px;padding:28px;margin-bottom:20px;color:var(--text)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Diagnóstico Empresarial</div>
+          <div style="font-size:22px;font-weight:700;margin-bottom:2px">${nome}</div>
+          <div style="font-size:12px;opacity:.85">${ramo} · ${periodo} meses analisados · ${hoje}</div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,0.15);border-radius:12px;padding:14px 20px">
+          <div style="font-size:36px;font-weight:700;line-height:1">${score}</div>
+          <div style="font-size:10px;opacity:.8">Score / 100</div>
+          <div style="font-size:11px;font-weight:600;margin-top:3px">${scoreLabel}</div>
+        </div>
       </div>
     </div>
 
-    <div class="g3" style="margin-bottom:20px">
-      <div class="kpi-card" style="text-align:center">
-        <div class="kpi-val" style="font-size:32px;color:${scoreColor}">${score}</div>
-        <div class="kpi-label">Score geral</div>
+    <!-- Alerta de perdas (se houver) -->
+    ${perdaTotal>500?`
+    <div style="background:#FDF0F0;border:1px solid #F5C6C6;border-left:4px solid #D63B3B;border-radius:10px;padding:16px;margin-bottom:20px">
+      <div style="font-size:13px;font-weight:600;color:#D63B3B;margin-bottom:6px">O seu negócio pode estar deixando dinheiro na mesa</div>
+      <div style="font-size:12px;color:#666;line-height:1.7">
+        Com base nos dados informados, identificamos uma perda estimada de <strong style="color:#D63B3B">R$ ${perdaTotal.toLocaleString('pt-BR',{maximumFractionDigits:0})}/mês</strong> por ineficiências operacionais e financeiras.
+        Com as melhorias certas, é possível recuperar até <strong style="color:#1E7A4E">R$ ${potRecuperacao.toLocaleString('pt-BR',{maximumFractionDigits:0})}/mês</strong> nos próximos 90 dias.
       </div>
-      <div class="kpi-card" style="text-align:center">
-        <div class="kpi-val" style="color:var(--red)">${lista.length}</div>
-        <div class="kpi-label">Desvios encontrados</div>
-      </div>
-      <div class="kpi-card" style="text-align:center">
-        <div class="kpi-val" style="color:var(--blue)">${[...new Set(rows.map(r=>r.k))].length}</div>
-        <div class="kpi-label">Indicadores avaliados</div>
+    </div>`:''}
+
+    <!-- Situação por área -->
+    <div style="background:#fff;border:1px solid #E0DDD8;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+      <div style="font-size:12px;font-weight:600;color:#FF3366;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">Saúde por departamento</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        ${Object.keys(DEP).map(dep=>{
+          const depDevs=lista.filter(r=>r.dep===DEP[dep].label);
+          const all=[...new Set(rows.filter(r=>r.dep===DEP[dep].label).map(r=>r.k))].length;
+          const sc=all?Math.round(100-(depDevs.length/all)*100):100;
+          const c=sc>=70?'#1E7A4E':sc>=45?'#C9860A':'#D63B3B';
+          const bg=sc>=70?'#EFF9F4':sc>=45?'#FEF9EC':'#FDF0F0';
+          return `<div style="background:${bg};border-radius:8px;padding:12px;text-align:center">
+            <div style="font-size:18px;margin-bottom:4px">${DEP[dep].icon}</div>
+            <div style="font-size:20px;font-weight:700;color:${c};line-height:1">${sc}</div>
+            <div style="font-size:10px;color:#666;margin-top:2px">${DEP[dep].label}</div>
+            ${depDevs.length?`<div style="font-size:9px;color:${c};margin-top:3px;font-weight:600">${depDevs.length} desvio(s)</div>`:'<div style="font-size:9px;color:#1E7A4E;margin-top:3px">✓ Ok</div>'}
+          </div>`;
+        }).join('')}
       </div>
     </div>
 
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:10px;font-family:'Space Grotesk',sans-serif">Score por Departamento</div>
-      <div class="g3">${Object.keys(DEP).map(dep=>{
-        const depDevs=lista.filter(r=>r.dep===DEP[dep].label);
-        const all=[...new Set(rows.filter(r=>r.dep===DEP[dep].label).map(r=>r.k))].length;
-        const sc=all?Math.round(100-(depDevs.length/all)*100):100;
-        const c=sc>=70?'var(--green)':sc>=45?'var(--yellow)':'var(--red)';
-        return `<div class="kpi-card" style="text-align:left">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span style="font-size:16px">${DEP[dep].icon}</span>
-            <span style="font-size:11px;font-weight:600">${DEP[dep].label}</span>
-            <span class="badge" style="margin-left:auto;background:${sc>=70?'var(--green-bg)':sc>=45?'var(--yellow-bg)':'var(--red-bg)'};color:${c}">${sc}%</span>
+    <!-- Desvios críticos -->
+    ${lista.length?`
+    <div style="background:#fff;border:1px solid #E0DDD8;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+      <div style="font-size:12px;font-weight:600;color:#FF3366;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">O que está impactando seu negócio agora</div>
+      ${lista.slice(0,5).map((r,i)=>{
+        const urgencia=i<2?'URGENTE':i<4?'IMPORTANTE':'MODERADO';
+        const urgBg=i<2?'#FDF0F0':i<4?'#FEF9EC':'#F0F7F4';
+        const urgColor=i<2?'#D63B3B':i<4?'#C9860A':'#1E7A4E';
+        const acao=ACOES_MAP[r.k]||`Revisar ${r.dep}`;
+        const impacto=r.k==='inadim'&&fat?`Impacto estimado: R$ ${Math.round((r.val-5)/100*fat).toLocaleString('pt-BR')}/mês`:
+                      r.k==='retrab'&&fat?`Impacto estimado: R$ ${Math.round((r.val-5)/100*fat*0.3).toLocaleString('pt-BR')}/mês`:'';
+        return `<div style="border:1px solid #E0DDD8;border-radius:8px;padding:12px;margin-bottom:8px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:3px">${acao}</div>
+              <div style="font-size:11px;color:#666">${r.dep} · ${r.kpi}</div>
+              ${impacto?`<div style="font-size:11px;color:#D63B3B;margin-top:4px;font-weight:500">${impacto}</div>`:''}
+            </div>
+            <span style="background:${urgBg};color:${urgColor};font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap">${urgencia}</span>
           </div>
-          ${depDevs.length?`<div style="font-size:10px;color:var(--muted)">${depDevs.length} desvio(s) · ${depDevs[0]?.kpi}</div>`:`<div style="font-size:10px;color:var(--green)">✓ OK</div>`}
         </div>`;
-      }).join('')}</div>
+      }).join('')}
+    </div>`:''}
+
+    <!-- O que a Artyva entrega -->
+    <div style="background:linear-gradient(135deg,#EFF9F4,#EEF4FC);border:1px solid #A8DFC4;border-radius:12px;padding:18px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:600;color:#1E7A4E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">O que entregamos juntos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00A885;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:12px;color:#333">Plano de ação priorizado com prazos e responsáveis</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00A885;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:12px;color:#333">Acompanhamento quinzenal dos indicadores</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00A885;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:12px;color:#333">Processos mapeados e documentados</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00A885;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:12px;color:#333">Suporte direto com a consultora via WhatsApp</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00A885;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:12px;color:#333">Dashboard atualizado mensalmente</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00A885;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:12px;color:#333">Gestão acessível para micro e pequeno negócio</div>
+        </div>
+      </div>
     </div>
 
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:10px;font-family:'Space Grotesk',sans-serif">Top ${Math.min(lista.length,6)} Ações Prioritárias</div>
-      ${lista.slice(0,6).map((r,i)=>`
-        <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #2A2A2A">
-          <div class="rank-num" style="background:${i<2?'var(--red-bg)':i<4?'var(--yellow-bg)':'var(--green-bg)'};color:${i<2?'var(--red)':i<4?'var(--yellow)':'var(--green)'}">${i+1}</div>
-          <div style="flex:1"><div style="font-size:12px;color:#ddd">${ACOES_MAP[r.k]||r.kpi}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${r.dep}</div></div>
-          <span class="badge ${i<2?'b-red':i<4?'b-yellow':'b-green'}">${i<2?'CRÍTICO':i<4?'MÉDIO':'BAIXO'}</span>
-        </div>`).join('')}
-    </div>
+    <!-- Objetivos e pontos fortes -->
+    ${meta.objetivos?`<div style="background:#fff;border:1px solid #E0DDD8;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:11px;font-weight:600;color:#2B6CB0;margin-bottom:6px">🎯 Seus objetivos para os próximos 12 meses</div><div style="font-size:12px;color:#555;line-height:1.7">${meta.objetivos}</div></div>`:''}
+    ${meta.pontos?`<div style="background:#EFF9F4;border:1px solid #A8DFC4;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:11px;font-weight:600;color:#1E7A4E;margin-bottom:6px">✅ Pontos fortes identificados</div><div style="font-size:12px;color:#555;line-height:1.7">${meta.pontos}</div></div>`:''}
 
-    <div style="padding:14px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:9px;font-size:11px;color:#B0FFD8;margin-top:16px">
-      ✓ Este relatório foi gerado pelo Sistema Artyva de Diagnóstico Empresarial. As recomendações são baseadas em análise de ${rows.length} indicadores ao longo de ${meta.periodo||rows[0]?.periodo} meses.
+    <!-- Rodapé -->
+    <div style="text-align:center;padding:20px;border-top:1px solid #E0DDD8;margin-top:10px">
+      <div style="font-size:13px;font-weight:600;color:#FF3366;margin-bottom:3px">Artyva Gestão Administrativa</div>
+      <div style="font-size:11px;color:#999">Gestão que gera resultados · +55 11 2368-4091 · @artyva_adm</div>
+      <div style="font-size:10px;color:#555;margin-top:6px">Diagnóstico confidencial gerado em ${hoje}</div>
     </div>
   </div>`;
 }
