@@ -540,10 +540,13 @@ function iniciarDiagnostico(){
     document.getElementById('bottom-bar').style.display = 'none';
     document.getElementById('sec-contexto').style.display = 'block';
     DEPS.forEach(dep => dep.fields.forEach(f => {
-      const el = f.tipo==='esc'
-        ? document.getElementById(`sg-${dep.id}-${f.k}-0`)
-        : document.getElementById(`inp-${dep.id}-${f.k}-0`);
-      if(el) el.style.display = f.tipo==='esc' ? 'flex' : '';
+      if(f.tipo==='esc'){
+        const el = document.getElementById(`sg-${dep.id}-${f.k}-0`);
+        if(el) el.style.display = 'block';
+      } else {
+        const wrap = document.getElementById(`inp-wrap-${dep.id}-${f.k}-0`);
+        if(wrap) wrap.style.display = 'block';
+      }
     }));
     mesesCompletos.add(0);
     document.getElementById('btn-enviar').style.display = 'block';
@@ -684,7 +687,7 @@ function renderMes(idx){
   mesSel = idx;
   const m = mesAtual[idx];
   const isLast = idx === mesAtual.length-1;
-  document.getElementById('mes-badge').innerHTML = `📅 Preenchendo: <strong style="color:#fff">${m.nome}</strong>`;
+  document.getElementById('mes-badge').innerHTML = `📅 Preenchendo: <strong style="color:var(--text)">${m.nome}</strong>`;
 
   DEPS.forEach(dep => {
     dep.fields.forEach(f => {
