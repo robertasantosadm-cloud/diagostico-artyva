@@ -7,748 +7,1203 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#1E1E1E;--bg2:#252525;--bg3:#2D2D2D;--border:#3A3A3A;
-  --text:#E8E8E8;--muted:#888;
+  --text:#E8E8E8;--muted:#999;
   --green:#4CAF82;--green-bg:#182D22;--green-border:#204A30;
   --blue:#5B9CF6;--blue-bg:#18243A;--blue-border:#2A3A5A;
-  --red:#E05252;--red-bg:#2D1818;--red-border:#4A2020;
-  --yellow:#F0C040;--yellow-bg:#2D2510;
-  --pink:#FF3366;--teal:#00C8A0;
+  --red:#E05252;--red-bg:#2D1818;--yellow:#F0C040;--pink:#FF3366;--teal:#00C8A0;
 }
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:12px;height:52px;position:sticky;top:0;z-index:100}
-.logo{width:32px;height:32px;background:var(--pink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:15px}
-.shell{max-width:700px;margin:0 auto;padding:20px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:14px;height:56px;position:sticky;top:0;z-index:100}
+.logo-mark{width:34px;height:34px;background:var(--pink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:16px;flex-shrink:0}
+.shell{max-width:720px;margin:0 auto;padding:24px 20px 100px}
+.stepper{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px}
+.stepper-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.stepper-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff}
+.stepper-sub{font-size:11px;color:var(--muted)}
+.progress{background:#333;border-radius:4px;height:8px;margin-bottom:10px}
+.prog-bar{height:8px;border-radius:4px;transition:width .4s}
+.month-bubbles{display:flex;gap:6px;flex-wrap:wrap}
+.m-bubble{width:44px;height:44px;border-radius:50%;border:2px solid var(--border);background:var(--bg3);color:var(--muted);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;text-align:center;line-height:1.2;flex-shrink:0;position:relative}
+.m-bubble.done{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.m-bubble.done::after{content:'✓';position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:var(--green);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;line-height:14px;text-align:center}
+.m-bubble.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue);transform:scale(1.1)}
+.m-bubble:hover:not(.locked){border-color:var(--blue-border);color:var(--blue)}
 .sec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
-.sec-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.sec-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.area-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:520px){.g2{grid-template-columns:1fr}}
-.field{margin-bottom:14px}
-.field-label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:5px;display:flex;align-items:center;gap:4px}
-.tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);color:var(--teal);font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;position:relative}
-.tip-box{position:fixed;background:#111;border:1px solid var(--teal);color:#ddd;font-size:11px;padding:8px 12px;border-radius:8px;max-width:260px;z-index:9999;display:none;line-height:1.6;pointer-events:none}
-input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border .2s}
+label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 11px;font-size:13px;outline:none;transition:border .2s;font-family:inherit}
 input:focus,select:focus,textarea:focus{border-color:var(--blue)}
-input.ok{border-color:var(--green-border)!important;background:#1A2A1A}
-input:disabled{opacity:.5;cursor:not-allowed}
+input.filled{border-color:var(--green-border)!important;background:#1E2A1E}
 select option{background:var(--bg3)}
-.input-row{display:flex;gap:6px;align-items:flex-start}
-.input-row input,.input-row select{flex:1}
-.ns-btn{padding:7px 10px;font-size:10px;font-weight:600;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
-.ns-btn.on{background:var(--yellow-bg);border-color:var(--yellow);color:var(--yellow)}
-.scale-row{display:flex;gap:5px;flex-wrap:wrap}
-.s-btn{width:40px;height:34px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;transition:all .12s}
-.s-btn.on{background:var(--green-bg);border-color:var(--green);color:var(--green)}
-.btn{padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
-.btn-pink{background:var(--pink);color:#fff}.btn-pink:hover{opacity:.9}
-.btn-green{background:var(--green);color:#fff}.btn-green:hover{opacity:.9}
-.btn-teal{background:var(--teal);color:#111;font-weight:700}.btn-teal:hover{opacity:.9}
+.q-row{margin-bottom:12px}
+.scale-wrap{display:flex;gap:4px}
+.s-btn{width:38px;height:32px;border:1px solid var(--border);border-radius:5px;background:var(--bg3);color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;transition:all .12s}
+.s-btn.sel{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.s-btn.sel-ns{background:#2A2A1A;border-color:var(--yellow);color:var(--yellow)}
+.nao-sei-btn{padding:4px 10px;font-size:10px;border:1px solid var(--border);border-radius:5px;background:var(--bg3);color:var(--muted);cursor:pointer;margin-top:4px;transition:all .12s}
+.nao-sei-btn.ativo{background:#2A2A1A;border-color:var(--yellow);color:var(--yellow)}
+.mes-ativo-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--blue);margin-bottom:14px}
+.btn{padding:11px 24px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--pink);color:#fff}.btn-primary:hover{opacity:.9}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.9}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{opacity:.9}
 .btn-outline{background:transparent;border:1px solid var(--border);color:#ccc}.btn-outline:hover{background:var(--bg3)}
-.req{color:var(--red)}
-.progress-bar{height:4px;background:var(--border);border-radius:2px;margin:8px 0}
-.progress-fill{height:4px;border-radius:2px;background:var(--teal);transition:width .4s}
-.cond-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px}
-#success{display:none;text-align:center;padding:48px 20px}
+.btn-teal{background:var(--teal);color:#111;border:none;font-weight:700}.btn-teal:hover{opacity:.9}
+.btn-sm{padding:7px 14px;font-size:11px}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:200}
+.bottom-bar-info{font-size:11px;color:var(--muted)}
+.excel-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:10px;padding:14px;margin-bottom:16px}
+.alert{border-radius:9px;padding:12px 15px;border-left:3px solid;font-size:12px;line-height:1.5;margin-bottom:10px}
+.alert-info{background:var(--blue-bg);border-color:var(--blue);color:#B0D8FF}
+.alert-success{background:var(--green-bg);border-color:var(--green);color:#B0FFD8}
+.alert-warn{background:#2D2510;border-color:var(--yellow);color:#FFE8A0}
+#success-screen{display:none;text-align:center;padding:40px 20px}
+/* Tooltip */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);color:var(--teal);font-size:10px;font-weight:700;cursor:help;margin-left:4px;flex-shrink:0;vertical-align:middle}
+.tooltip-box{position:fixed;background:#111;border:1px solid var(--teal);color:#ddd;font-size:11px;padding:8px 12px;border-radius:8px;max-width:260px;z-index:9999;pointer-events:none;line-height:1.6;display:none}
+/* DDI select */
+.ddi-wrap{display:flex;gap:6px}
+.ddi-wrap select{max-width:120px}
+/* Required star */
+.req{color:var(--red);margin-left:2px}
+/* Auto campo condicional */
+.cond-fields{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px}
 </style>
 </head>
 <body>
 
-<div id="tip-box" class="tip-box"></div>
+<div id="tooltip-box" class="tooltip-box"></div>
 
 <div class="topbar">
-  <div class="logo">A</div>
+  <div class="logo-mark">A</div>
   <div style="flex:1">
     <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#fff">Artyva Gestão Administrativa</div>
-    <div style="font-size:10px;color:var(--muted)">Diagnóstico Empresarial Confidencial</div>
+    <div style="font-size:10px;color:var(--muted)">Diagnóstico Empresarial — Confidencial</div>
   </div>
-  <div id="prog-txt" style="font-size:11px;color:var(--muted)">0% preenchido</div>
+  <div id="prog-topbar" style="font-size:11px;color:var(--muted)">0% preenchido</div>
 </div>
 
 <div class="shell">
 
-<!-- AVISO -->
-<div id="aviso" style="background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:16px;margin-bottom:16px">
-  <div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:8px">📋 Antes de começar — leia com atenção</div>
-  <p style="font-size:12px;line-height:1.8">Preencha com <strong>honestidade e precisão</strong> — quanto mais correto, melhor será a análise. Recomendamos que seja respondido pelo <strong>dono ou CEO</strong> da empresa.</p>
-  <p style="font-size:12px;line-height:1.8;margin-top:6px">Se <strong>não souber</strong> um dado, clique em <span style="background:var(--yellow-bg);border:1px solid var(--yellow);color:var(--yellow);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">Não sei</span> — isso também é importante para o diagnóstico!</p>
-  <p style="font-size:10px;color:var(--muted);margin-top:10px">🔒 Informações confidenciais — uso exclusivo da Artyva Gestão Administrativa</p>
-  <button onclick="document.getElementById('aviso').style.display='none'" class="btn btn-teal" style="margin-top:12px;padding:8px 20px;font-size:12px">Entendi, vou preencher com cuidado ✓</button>
+<!-- AVISO CONFIDENCIALIDADE -->
+<div id="aviso-conf" style="background:#182D22;border:1px solid var(--teal);border-radius:12px;padding:18px;margin-bottom:20px">
+  <div style="font-size:15px;font-weight:700;color:var(--teal);margin-bottom:10px">📋 Antes de começar — leia com atenção</div>
+  <p style="font-size:13px;line-height:1.8;color:var(--text)">O preenchimento correto e honesto é <strong>fundamental</strong> para identificarmos os desvios reais do seu negócio.</p>
+  <p style="font-size:13px;line-height:1.8;margin-top:6px;color:var(--text)">Recomendamos que o formulário seja respondido pelo <strong>dono, CEO ou responsável máximo</strong> da empresa — alguém com visão ampla e imparcial da operação.</p>
+  <p style="font-size:13px;line-height:1.8;margin-top:6px;color:var(--text)">Se <strong>não souber</strong> algum dado, use o botão <span style="color:var(--yellow)">Não sei</span>. Isso também é um indicador importante!</p>
+  <p style="font-size:11px;margin-top:10px;color:var(--muted)">🔒 Todas as informações são tratadas com absoluta confidencialidade pela Artyva Gestão Administrativa.
+    <button onclick="mostrarPolitica()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:11px;text-decoration:underline;padding:0;margin-left:4px">Ver política completa</button>
+  </p>
+  <button onclick="document.getElementById('aviso-conf').style.display='none'" class="btn btn-teal btn-sm" style="margin-top:14px">Entendi, vou preencher com cuidado ✓</button>
 </div>
 
-<div class="progress-bar"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
+<!-- TELA INICIAL -->
+<div id="tela-inicial">
+  <div class="sec">
+    <div class="sec-title">🏢 Identificação da Empresa</div>
 
-<!-- IDENTIFICAÇÃO -->
-<div class="sec">
-  <div class="sec-title"><div class="sec-icon" style="background:#1A2A1A">🏢</div>Identificação da Empresa</div>
-  <div class="g2">
-    <div class="field">
-      <div class="field-label">Nome da empresa <span class="req">*</span></div>
-      <input id="f-nome" placeholder="Razão social ou nome fantasia" oninput="calcProg()">
+    <div class="q-row">
+      <label>Nome da empresa <span class="req">*</span></label>
+      <input id="c-nome" placeholder="Razão social ou nome fantasia">
     </div>
-    <div class="field">
-      <div class="field-label">
+
+    <div class="q-row">
+      <label>
         Setor de atuação <span class="req">*</span>
-        <span class="tip" data-tip="Selecione o setor que melhor representa sua empresa. Isso define os benchmarks de comparação usados no diagnóstico.">?</span>
-      </div>
-      <select id="f-ramo" onchange="toggleRamoOutros(this.value);calcProg()">
+        <span class="tip" data-tip="Selecione o setor que mais representa sua empresa. Isso define os benchmarks de comparação do diagnóstico.">?</span>
+      </label>
+      <select id="c-ramo" onchange="toggleRamoOutros(this.value);atualizarDepsVisiveis()">
         <option value="">Selecione...</option>
-        <option>Varejo</option><option>Alimentação/Restaurante</option><option>Serviços</option>
-        <option>Indústria</option><option>Tecnologia</option><option>Saúde</option>
-        <option>Construção Civil</option><option>Educação</option><option>Logística</option>
-        <option value="outros">Outros</option>
+        <option value="Varejo">Varejo</option>
+        <option value="Alimentação/Restaurante">Alimentação / Restaurante</option>
+        <option value="Serviços">Serviços</option>
+        <option value="Indústria">Indústria</option>
+        <option value="Tecnologia">Tecnologia</option>
+        <option value="Saúde">Saúde</option>
+        <option value="Construção Civil">Construção Civil</option>
+        <option value="Educação">Educação</option>
+        <option value="Logística">Logística</option>
+        <option value="Outros">Outros</option>
       </select>
-      <div id="ramo-outros" style="display:none;margin-top:6px">
-        <input id="f-ramo-txt" placeholder="Descreva o setor">
+      <div id="ramo-outros-div" style="display:none;margin-top:8px">
+        <input id="c-ramo-outros" placeholder="Descreva o setor de atuação da empresa">
       </div>
     </div>
-    <div class="field">
-      <div class="field-label">Estado</div>
-      <select id="f-estado">
-        <option value="">Selecione...</option>
-        <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
-        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-        <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
-        <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
-        <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
-        <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
-        <option selected>SP</option><option>SE</option><option>TO</option>
-      </select>
-    </div>
-    <div class="field">
-      <div class="field-label">Cidade</div>
-      <input id="f-cidade" placeholder="São Paulo">
-    </div>
-    <div class="field">
-      <div class="field-label">
-        Número de funcionários <span class="req">*</span>
-        <span class="tip" data-tip="Inclua todos os colaboradores: CLT, PJ, temporários e sócios que trabalham na empresa.">?</span>
-      </div>
-      <select id="f-func">
-        <option value="">Selecione...</option>
-        <option>1 a 5</option><option>6 a 20</option><option>21 a 50</option>
-        <option>51 a 200</option><option>Mais de 200</option>
+
+    <div class="q-row">
+      <label>
+        Tipo de negócio <span class="req">*</span>
+        <span class="tip" data-tip="Isso ajusta automaticamente quais perguntas são relevantes para sua empresa. Ex: empresa de serviços não tem estoque físico.">?</span>
+      </label>
+      <select id="c-tipo-negocio" onchange="atualizarDepsVisiveis()">
+        <option value="comercio">Comércio / Varejo (vende produtos físicos)</option>
+        <option value="servicos">Prestação de Serviços (não tem estoque físico)</option>
+        <option value="industria">Indústria / Produção (fabrica produtos)</option>
+        <option value="alimentacao">Alimentação / Restaurante</option>
+        <option value="tecnologia">Tecnologia / Software (produto digital)</option>
+        <option value="saude">Saúde / Clínica</option>
+        <option value="educacao">Educação / Escola</option>
+        <option value="construcao">Construção Civil / Imobiliária</option>
       </select>
     </div>
-    <div class="field">
-      <div class="field-label">
+
+    <div class="g2">
+      <div class="q-row">
+        <label>
+          Estado <span class="req">*</span>
+        </label>
+        <select id="c-estado" onchange="carregarCidades(this.value)">
+          <option value="">Selecione o estado...</option>
+          <option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option>
+          <option value="AM">Amazonas</option><option value="BA">Bahia</option><option value="CE">Ceará</option>
+          <option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option>
+          <option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option>
+          <option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option>
+          <option value="PR">Paraná</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option>
+          <option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RS">Rio Grande do Sul</option>
+          <option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option>
+          <option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option>
+        </select>
+      </div>
+      <div class="q-row">
+        <label>Cidade <span class="req">*</span></label>
+        <input id="c-cidade" placeholder="Digite a cidade">
+      </div>
+    </div>
+
+    <div class="q-row">
+      <label>Número de funcionários <span class="req">*</span>
+        <span class="tip" data-tip="Inclua todos os colaboradores — CLT, PJ, temporários e sócios que trabalham na empresa.">?</span>
+      </label>
+      <select id="c-func">
+        <option value="">Selecione...</option>
+        <option value="1-5">1 a 5 funcionários</option>
+        <option value="6-20">6 a 20 funcionários</option>
+        <option value="21-50">21 a 50 funcionários</option>
+        <option value="51-200">51 a 200 funcionários</option>
+        <option value="200+">Mais de 200 funcionários</option>
+      </select>
+    </div>
+
+    <div class="q-row">
+      <label>
         Período de análise <span class="req">*</span>
-        <span class="tip" data-tip="Período dos DADOS que você vai preencher — ex: últimos 3 meses de faturamento. NÃO é o prazo do serviço de consultoria.">?</span>
-        <span style="color:var(--yellow);font-size:9px;margin-left:4px">📌 período de dados, não do serviço</span>
-      </div>
-      <select id="f-periodo" onchange="buildMeses()">
+        <span class="tip" data-tip="Este é o período de DADOS da sua empresa que será analisado — por exemplo, os últimos 3 meses de faturamento, custos, etc. NÃO é o prazo do serviço de consultoria.">?</span>
+        <span style="display:block;font-size:10px;color:var(--yellow);font-weight:400;margin-top:2px">📌 Período de dados da empresa (ex: últimos 3 meses). Não é o prazo do serviço.</span>
+      </label>
+      <select id="c-periodo">
         <option value="1">Mensal (1 mês)</option>
         <option value="3" selected>Trimestral (3 meses)</option>
         <option value="6">Semestral (6 meses)</option>
+        <option value="9">9 meses</option>
         <option value="12">Anual (12 meses)</option>
       </select>
     </div>
-  </div>
-  <div class="field">
-    <div class="field-label">WhatsApp (para envio do resultado)</div>
-    <div style="display:flex;gap:6px">
-      <select id="f-ddi" style="max-width:130px">
-        <option value="+55">🇧🇷 +55</option><option value="+1">🇺🇸 +1</option>
-        <option value="+351">🇵🇹 +351</option><option value="+44">🇬🇧 +44</option>
-        <option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option>
-        <option value="+57">🇨🇴 +57</option><option value="+52">🇲🇽 +52</option>
-      </select>
-      <input id="f-zap" placeholder="(11) 99999-9999" oninput="mascaraTel(this)">
-    </div>
-  </div>
-</div>
 
-<!-- SELETOR DE MÊS -->
-<div id="meses-nav" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px">
-  <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:600">Navegue pelos meses para preencher:</div>
-  <div id="meses-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-  <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" id="meses-prog" style="width:0%"></div></div>
-  <div id="meses-status" style="font-size:10px;color:var(--muted);margin-top:4px">0 de 0 meses preenchidos</div>
-</div>
-
-<!-- BADGE MÊS ATIVO -->
-<div id="mes-badge" style="display:none;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--blue);margin-bottom:14px;display:none">📅 <span id="mes-badge-txt">Mês 1</span></div>
-
-<!-- FORM SECTIONS — preenchidas dinamicamente -->
-<div id="form-body"></div>
-
-<!-- CONTEXTO FINAL -->
-<div id="sec-final" style="display:none">
-  <div class="sec">
-    <div class="sec-title"><div class="sec-icon" style="background:#1A1A2A">💬</div>Contexto e Considerações Finais</div>
-    <div class="field">
-      <div class="field-label">Principais desafios atuais
-        <span class="tip" data-tip="Descreva os maiores obstáculos da empresa hoje. Seja específico — isso ajuda muito na análise.">?</span>
+    <div class="q-row">
+      <label>WhatsApp para contato
+        <span class="tip" data-tip="Número de WhatsApp para envio do resultado do diagnóstico. O código do país já vem com Brasil (+55) selecionado.">?</span>
+      </label>
+      <div class="ddi-wrap">
+        <select id="c-ddi" style="max-width:130px">
+          <option value="+55">🇧🇷 +55 Brasil</option>
+          <option value="+1">🇺🇸 +1 EUA/Canadá</option>
+          <option value="+351">🇵🇹 +351 Portugal</option>
+          <option value="+44">🇬🇧 +44 Reino Unido</option>
+          <option value="+49">🇩🇪 +49 Alemanha</option>
+          <option value="+33">🇫🇷 +33 França</option>
+          <option value="+34">🇪🇸 +34 Espanha</option>
+          <option value="+39">🇮🇹 +39 Itália</option>
+          <option value="+54">🇦🇷 +54 Argentina</option>
+          <option value="+56">🇨🇱 +56 Chile</option>
+          <option value="+57">🇨🇴 +57 Colômbia</option>
+          <option value="+52">🇲🇽 +52 México</option>
+          <option value="+598">🇺🇾 +598 Uruguai</option>
+          <option value="+595">🇵🇾 +595 Paraguai</option>
+          <option value="+591">🇧🇴 +591 Bolívia</option>
+          <option value="+51">🇵🇪 +51 Peru</option>
+          <option value="+593">🇪🇨 +593 Equador</option>
+          <option value="+58">🇻🇪 +58 Venezuela</option>
+          <option value="+81">🇯🇵 +81 Japão</option>
+          <option value="+86">🇨🇳 +86 China</option>
+        </select>
+        <input id="c-zap" placeholder="(11) 99999-9999" style="flex:1" oninput="mascaraTel(this)">
       </div>
-      <textarea id="f-desafios" rows="3" placeholder="Ex: dificuldade em reter clientes, custo alto, equipe reduzida..."></textarea>
     </div>
-    <div class="field">
-      <div class="field-label">Objetivos para os próximos 12 meses
-        <span class="tip" data-tip="Quais são as metas que você quer alcançar? Ex: crescer 30%, abrir nova unidade, reduzir custos.">?</span>
-      </div>
-      <textarea id="f-objetivos" rows="3" placeholder="Ex: aumentar faturamento, contratar pessoas, entrar em novo mercado..."></textarea>
+
+  </div><!-- /sec identificação -->
+
+  <div class="excel-box">
+    <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px">📥 Prefere importar pelo Excel?</div>
+    <div style="font-size:11px;color:#B0FFD8;margin-bottom:8px;line-height:1.6">
+      Baixe o template, preencha com os dados da sua empresa e faça o upload — todos os campos são preenchidos automaticamente.<br>
+      <strong style="color:var(--green)">Layout:</strong> cada departamento em uma aba, colunas por mês, linha por KPI.
     </div>
-    <div class="field">
-      <div class="field-label">Pontos fortes da empresa</div>
-      <textarea id="f-pontos" rows="2" placeholder="O que a empresa faz muito bem..."></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-teal btn-sm" onclick="baixarTemplate()">⬇ Baixar Template Excel</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('excel-upload').click()">📂 Importar Excel preenchido</button>
+      <input type="file" id="excel-upload" accept=".xlsx,.xls,.csv" style="display:none" onchange="importarExcel(this)">
     </div>
-    <div class="field">
-      <div class="field-label">Considerações finais
-        <span class="tip" data-tip="Espaço livre para registrar qualquer informação que não foi coberta nas perguntas. Tudo é importante!">?</span>
-        <span style="font-size:9px;color:var(--muted);margin-left:4px">Algo que não foi coberto acima?</span>
-      </div>
-      <textarea id="f-consideracoes" rows="3" placeholder="Escreva livremente aqui..."></textarea>
-    </div>
+    <div id="excel-msg" style="font-size:11px;margin-top:8px"></div>
   </div>
-  <button id="btn-enviar" class="btn btn-green" style="width:100%;font-size:15px;padding:14px" onclick="enviar()">✓ Enviar Diagnóstico</button>
-  <div id="msg-envio" style="margin-top:10px;font-size:12px;text-align:center"></div>
-</div>
+
+  <div id="aviso-deps-ocultos" class="alert alert-info" style="display:none;margin-bottom:10px;font-size:12px"></div>
+  <div id="inicial-msg" style="margin-bottom:10px;font-size:12px"></div>
+  <button class="btn btn-primary" style="width:100%;font-size:15px;padding:14px" onclick="iniciarDiagnostico()">→ Iniciar Diagnóstico</button>
+</div><!-- /tela-inicial -->
+
+<!-- TELA FORM -->
+<div id="tela-form" style="display:none">
+
+  <div class="stepper" id="stepper">
+    <div class="stepper-top">
+      <div>
+        <div class="stepper-title" id="stepper-title">Diagnóstico</div>
+        <div class="stepper-sub" id="stepper-sub">Clique nas bolhas para navegar</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted)" id="stepper-pct">0 meses completos</div>
+    </div>
+    <div class="progress"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+    <div class="month-bubbles" id="month-bubbles"></div>
+  </div>
+
+  <div class="mes-ativo-badge" id="mes-badge">📅 Mês</div>
+  <div id="form-sections"></div>
+
+  <div id="sec-contexto" style="display:none">
+    <div class="sec">
+      <div class="sec-title">💬 Contexto, Objetivos e Considerações Finais</div>
+      <div class="q-row">
+        <label>Principais desafios atuais da empresa
+          <span class="tip" data-tip="Descreva os maiores obstáculos que sua empresa enfrenta hoje. Seja específico.">?</span>
+        </label>
+        <textarea id="c-desafios" rows="3" placeholder="Ex: dificuldade em reter clientes, custo operacional alto, equipe reduzida..."></textarea>
+      </div>
+      <div class="q-row">
+        <label>Objetivos para os próximos 12 meses
+          <span class="tip" data-tip="Quais são as principais metas que você quer alcançar? Ex: crescer 30% no faturamento, abrir nova unidade, reduzir custos.">?</span>
+        </label>
+        <textarea id="c-objetivos" rows="3" placeholder="Ex: aumentar faturamento 30%, contratar 5 pessoas, entrar em novo mercado..."></textarea>
+      </div>
+      <div class="q-row">
+        <label>Pontos fortes da empresa</label>
+        <textarea id="c-pontos" rows="2" placeholder="O que a empresa faz muito bem..."></textarea>
+      </div>
+      <div class="q-row" style="margin-top:8px">
+        <label>💬 Considerações finais
+          <span class="tip" data-tip="Espaço livre para registrar qualquer desvio, situação ou informação que não foi coberta nas perguntas acima. Nada é irrelevante!">?</span>
+          <span style="display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:2px">Algo que não foi coberto acima? Algum desvio específico que queira destacar?</span>
+        </label>
+        <textarea id="c-consideracoes" rows="4" placeholder="Escreva livremente aqui..."></textarea>
+      </div>
+    </div>
+    <div class="alert alert-success" id="alert-pronto" style="display:none">
+      ✅ <strong>Todos os meses preenchidos!</strong> Revise clicando nas bolhas acima e clique em "Enviar Diagnóstico" quando estiver pronto.
+    </div>
+    <button class="btn btn-success" style="width:100%;display:none;font-size:15px;padding:14px" id="btn-enviar" onclick="enviarFormulario()">✓ Enviar Diagnóstico</button>
+    <div id="form-msg" style="margin-top:10px;font-size:12px;text-align:center"></div>
+  </div>
+
+</div><!-- /tela-form -->
 
 <!-- SUCESSO -->
-<div id="success" style="display:none;text-align:center;padding:48px 20px">
+<div id="success-screen">
   <div style="font-size:56px;margin-bottom:16px">✅</div>
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:10px">Diagnóstico enviado!</div>
-  <div style="font-size:13px;color:var(--muted);line-height:1.7;max-width:400px;margin:0 auto 20px">Obrigado pelo tempo e disposição. Em breve a Artyva entrará em contato com os resultados.</div>
-  <div style="padding:16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;font-size:12px;color:#B0FFD8;max-width:360px;margin:0 auto">
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:10px">Diagnóstico enviado com sucesso!</div>
+  <div style="font-size:13px;color:var(--muted);line-height:1.7;max-width:420px;margin:0 auto 20px">
+    Obrigado pelo seu tempo e disposição. Nossa equipe irá analisar todas as informações e em breve entrará em contato com os resultados e recomendações personalizadas.
+  </div>
+  <div style="padding:16px 20px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;font-size:12px;color:#B0FFD8;max-width:380px;margin:0 auto">
     <strong>Artyva Gestão Administrativa</strong><br>
     <span style="color:#888">Gestão que gera resultados</span>
   </div>
 </div>
 
-<!-- BARRA INFERIOR -->
-<div id="barra-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;z-index:200">
-  <div style="font-size:11px;color:var(--muted)">
-    <strong id="bb-mes" style="color:#fff"></strong>
-    <div id="bb-ok" style="color:var(--green)"></div>
+<!-- JÁ PREENCHIDO -->
+<div id="ja-preenchido-screen" style="display:none;text-align:center;padding:40px 20px">
+  <div style="font-size:56px;margin-bottom:16px">🔒</div>
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:10px">Formulário já preenchido</div>
+  <div style="font-size:13px;color:var(--muted);line-height:1.7;max-width:420px;margin:0 auto 20px">
+    Este formulário já foi preenchido e o link não está mais disponível.<br>
+    Se precisar corrigir alguma informação, entre em contato com a Artyva.
   </div>
-  <div style="display:flex;gap:8px">
-    <button class="btn btn-outline" id="btn-ant" onclick="navMes(-1)" style="padding:8px 16px;font-size:12px">← Anterior</button>
-    <button class="btn" id="btn-prox" onclick="navMes(1)" style="padding:8px 16px;font-size:12px;background:var(--blue);color:#fff">Próximo →</button>
+  <div style="padding:16px 20px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:12px;font-size:12px;color:#B0D8FF;max-width:380px;margin:0 auto 16px">
+    <strong>📞 Artyva Gestão Administrativa</strong><br>
+    WhatsApp: +55 11 2368-4091
   </div>
+  <a href="https://wa.me/5511123684091" target="_blank" class="btn btn-teal" style="display:inline-block;text-decoration:none">💬 Falar com a Artyva</a>
 </div>
 
 </div><!-- /shell -->
 
-<script>
-const SB_URL='https://bxqqygsuxvmdtjugesng.supabase.co';
-const SB_KEY='sb_publishable_nxOSdcbaQ6uslLiCTVW5Vg_0-tWI3Xj';
-let sb=null;
-try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){}
+<!-- BARRA INFERIOR -->
+<div class="bottom-bar" id="bottom-bar" style="display:none">
+  <div class="bottom-bar-info">
+    <strong id="bb-mes-atual"></strong>
+    <div id="bb-status"></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-outline btn-sm" id="btn-anterior" onclick="irMes(-1)">← Anterior</button>
+    <button class="btn btn-blue btn-sm" id="btn-proximo" onclick="irMes(1)">Próximo →</button>
+  </div>
+</div>
 
-// ============================================================
-// DADOS DOS DEPARTAMENTOS
-// ============================================================
-const DEPS=[
-  {id:'fin',label:'Financeiro',icon:'💰',bg:'#182D22',fields:[
-    {k:'fat',    label:'Faturamento mensal (R$)',            tipo:'num',ph:'Ex: 80000',
-     tip:'Soma total de todas as vendas do mês, antes de descontar qualquer custo.'},
-    {k:'fat_cli',label:'Faturamento por cliente (R$)',       tipo:'num',ph:'Ex: 850',
-     tip:'Faturamento total dividido pelo número de clientes ativos. Indica o valor médio que cada cliente representa.'},
-    {k:'mb',     label:'Margem bruta (%)',                   tipo:'num',ph:'Ex: 35',
-     tip:'Porcentagem que sobra após os custos diretos de produção/serviço. Ex: vende R$100, produto custa R$65 → margem bruta 35%.'},
-    {k:'ml',     label:'Margem líquida (%)',                 tipo:'num',ph:'Ex: 12',
-     tip:'Porcentagem que sobra após TODOS os custos (fixos + variáveis + impostos). Referência saudável: acima de 12%.'},
-    {k:'ticket', label:'Ticket médio por venda (R$)',        tipo:'num',ph:'Ex: 350',
-     tip:'Valor médio cobrado por venda/pedido. Calculado dividindo o faturamento pelo número de vendas no mês.'},
-    {k:'cfixo',  label:'Custo fixo mensal (R$)',             tipo:'num',ph:'Ex: 25000',
-     tip:'Custos que não mudam independente das vendas: aluguel, salários fixos, energia, internet, etc.'},
-    {k:'cvar',   label:'Custo variável mensal (R$)',         tipo:'num',ph:'Ex: 30000',
-     tip:'Custos que variam conforme as vendas: matéria-prima, comissões, embalagens, frete, etc.'},
-    {k:'inadim', label:'Inadimplência (%)',                  tipo:'num',ph:'Ex: 8',
-     tip:'Porcentagem do faturamento não recebida no prazo. Acima de 5% representa risco de caixa.'},
-    {k:'divida', label:'Endividamento (% do faturamento)',   tipo:'num',ph:'Ex: 20',
-     tip:'Total de dívidas (empréstimos, financiamentos) em relação ao faturamento mensal. Acima de 40% é alerta.'},
-    {k:'rentab', label:'Rentabilidade estimada (%)',         tipo:'num',ph:'Ex: 15',
-     tip:'Retorno sobre o capital investido no negócio. Abaixo de 10% significa que o dinheiro renderia mais na poupança.'},
+<script>
+// =====================================================
+// SUPABASE
+// =====================================================
+const SUPABASE_URL = 'https://bxqqygsuxvmdtjugesng.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_nxOSdcbaQ6uslLiCTVW5Vg_0-tWI3Xj';
+let sb = null;
+try{ sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }catch(e){}
+
+// =====================================================
+// TOOLTIPS
+// =====================================================
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('.tip');
+  if(!el) return;
+  const box = document.getElementById('tooltip-box');
+  box.textContent = el.dataset.tip;
+  box.style.display = 'block';
+});
+document.addEventListener('mousemove', e => {
+  const box = document.getElementById('tooltip-box');
+  if(box.style.display === 'block'){
+    box.style.left = (e.clientX + 14) + 'px';
+    box.style.top = (e.clientY + 14) + 'px';
+  }
+});
+document.addEventListener('mouseout', e => {
+  if(e.target.closest('.tip')){
+    document.getElementById('tooltip-box').style.display = 'none';
+  }
+});
+
+// =====================================================
+// CAMPOS / TOOLTIPS CONFIG
+// =====================================================
+const TIPS = {
+  fat: 'Soma de todas as vendas do mês, sem descontar custos. Ex: R$ 80.000',
+  fat_cli: 'Faturamento total dividido pelo número de clientes ativos no mês. Ex: R$ 850/cliente',
+  ticket: 'Valor médio por venda/pedido. Calculado automaticamente se informar faturamento e nº de vendas.',
+  mb: 'Porcentagem do faturamento que sobra após os custos diretos de produção/serviço. Ex: se vende R$100 e o produto custa R$60, a margem bruta é 40%.',
+  ml: 'Porcentagem do faturamento que sobra após TODOS os custos (fixos + variáveis + impostos). Ex: margem líquida de 12%.',
+  cfixo: 'Custos que não mudam independente do volume de vendas: aluguel, salários fixos, energia, etc.',
+  cvar: 'Custos que variam com as vendas: matéria-prima, comissões, embalagens, frete, etc.',
+  inadim: 'Porcentagem do faturamento que não foi recebida no prazo. Ex: se faturou R$100k e R$8k estão em atraso, a inadimplência é 8%.',
+  divida: 'Total de dívidas (empréstimos, financiamentos, parcelamentos) em relação ao faturamento mensal. Ex: dívida de R$40k com faturamento de R$100k = 40%.',
+  rentab: 'Porcentagem de retorno sobre o valor investido no negócio. Ex: investiu R$200k e tem lucro de R$36k/ano = rentabilidade de 18%.',
+  proc_map: 'Porcentagem dos processos da empresa que estão documentados/escritos (manuais, fluxogramas, SOPs). Ex: 40%.',
+  proc_crit: 'Número de processos que são essenciais para a operação da empresa. Ex: atendimento, produção, entrega.',
+  tempo_exec: 'Tempo médio em dias para completar um ciclo do processo crítico principal. Ex: 3 dias para entregar um pedido.',
+  retrab: 'Porcentagem de tarefas que precisam ser refeitas por erros ou falhas. Ex: 10% dos pedidos têm retrabalho.',
+  cap_prod: 'Porcentagem da capacidade total que está sendo utilizada. Ex: se pode produzir 100 unidades e produz 70, é 70%.',
+  automacao: 'Nível de automação dos processos: 1=tudo manual, 2=pouca automação, 3=parcial, 4=boa automação, 5=altamente automatizado.',
+  falhas: 'Número de falhas, erros operacionais ou gargalos identificados nos últimos 3 meses.',
+  qualidade: 'Avaliação geral da qualidade dos seus produtos/serviços: 1=muito ruim, 5=excelente.',
+  turnover: 'Porcentagem de funcionários que saíram da empresa no último ano. Ex: tinha 20 funcionários e saíram 4 = 20%.',
+  absen: 'Porcentagem de faltas e atrasos em relação ao total de horas trabalhadas. Ex: 5%.',
+  sem_resp: 'Porcentagem de funções/cargos sem um responsável claramente definido. Ex: 30% das funções não têm dono.',
+  hext: 'Média de horas extras feitas por funcionário por mês. Ex: 8 horas/mês.',
+  satisf: 'Avaliação da satisfação da equipe: 1=muito insatisfeita, 5=muito satisfeita.',
+  trein: 'Número de treinamentos ou capacitações realizados por ano (para toda a equipe).',
+  giro: 'Quantas vezes o estoque completo é renovado por mês. Ex: estoque de R$50k com vendas de R$200k = giro 4.',
+  cobertura: 'Quantos dias de vendas o estoque atual consegue cobrir. Ex: 30 dias.',
+  ruptura: 'Porcentagem de vezes que faltou produto quando o cliente precisava. Ex: 8%.',
+  perda: 'Porcentagem do estoque perdida por vencimento, dano ou obsolescência. Ex: 3%.',
+  cli_ativos: 'Clientes que fizeram pelo menos uma compra nos últimos 3 meses.',
+  conv: 'Porcentagem de leads/contatos que se tornaram clientes. Ex: de 100 contatos, 20 compraram = 20%.',
+  ciclo: 'Dias médios desde o primeiro contato até o fechamento da venda. Ex: 7 dias.',
+  recomp: 'Porcentagem de clientes que compraram mais de uma vez no período.',
+  nps: 'Nota estimada de satisfação dos clientes de 0 a 100. Acima de 50 é bom.',
+  integ: 'Nível de integração entre os sistemas da empresa: 1=sistemas isolados, 5=totalmente integrados.',
+  backup: 'Nível de proteção dos dados: 1=sem backup, 5=backup automático e seguro na nuvem.',
+  auto_tec: 'Nível de automação com tecnologia: 1=tudo manual, 5=altamente automatizado.',
+  infra: 'Qualidade dos equipamentos e infraestrutura de TI: 1=obsoleto, 5=moderno e atualizado.',
+};
+
+// =====================================================
+// CAMPOS POR DEPARTAMENTO
+// =====================================================
+const DEPS = [
+  {id:'fin', label:'Financeiro', icon:'💰', bg:'#182D22', fields:[
+    {k:'fat',     label:'Faturamento mensal (R$)',          tipo:'num', ph:'Ex: 80000'},
+    {k:'fat_cli', label:'Faturamento por cliente (R$)',     tipo:'num', ph:'Ex: 850', calc:true},
+    {k:'mb',      label:'Margem bruta (%)',                 tipo:'num', ph:'Ex: 35'},
+    {k:'ml',      label:'Margem líquida (%)',               tipo:'num', ph:'Ex: 12'},
+    {k:'ticket',  label:'Ticket médio por venda (R$)',      tipo:'num', ph:'Ex: 350'},
+    {k:'cfixo',   label:'Custo fixo mensal (R$)',           tipo:'num', ph:'Ex: 25000'},
+    {k:'cvar',    label:'Custo variável mensal (R$)',       tipo:'num', ph:'Ex: 30000'},
+    {k:'inadim',  label:'Inadimplência (%)',                tipo:'num', ph:'Ex: 8'},
+    {k:'divida',  label:'Endividamento total (% do faturamento)', tipo:'num', ph:'Ex: 20'},
+    {k:'rentab',  label:'Rentabilidade estimada (%)',       tipo:'num', ph:'Ex: 15'},
   ]},
-  {id:'ops',label:'Operações',icon:'⚙️',bg:'#18243A',fields:[
-    {k:'proc_map',  label:'Processos documentados (%)',              tipo:'num',ph:'Ex: 40',
-     tip:'Porcentagem dos processos da empresa que estão escritos/documentados (manuais, fluxogramas). Abaixo de 40% indica alto risco operacional.'},
-    {k:'proc_crit', label:'Nº de processos críticos',               tipo:'num',ph:'Ex: 5',
-     tip:'Quantidade de processos essenciais para a operação: atendimento, produção, entrega, financeiro, etc.'},
-    {k:'tempo_exec',label:'Tempo médio de execução do processo crítico (dias)', tipo:'num',ph:'Ex: 3',
-     tip:'Quantos dias em média leva para completar o processo mais importante da sua empresa (ex: entregar um pedido, prestar um serviço).'},
-    {k:'retrab',    label:'Taxa de retrabalho (%)',                  tipo:'num',ph:'Ex: 15',
-     tip:'Porcentagem de tarefas que precisam ser refeitas por erros. Cada 1% de retrabalho representa custo e tempo desperdiçado.'},
-    {k:'cap_prod',  label:'Capacidade produtiva utilizada (%)',      tipo:'num',ph:'Ex: 70',
-     tip:'Porcentagem da capacidade total que está sendo usada. Abaixo de 60% indica recursos ociosos.'},
-    {k:'automacao', label:'Grau de automação',                       tipo:'esc',
-     tip:'Nível de automação dos processos: 1=tudo manual, 2=pouca automação, 3=parcial, 4=boa automação, 5=altamente automatizado.',cond:true},
-    {k:'falhas',    label:'Falhas/gargalos (últimos 3 meses)',       tipo:'num',ph:'Ex: 4',
-     tip:'Número de falhas, erros operacionais ou gargalos identificados nos últimos 3 meses.'},
-    {k:'qualidade', label:'Qualidade dos produtos/serviços (1–5)',   tipo:'esc',
-     tip:'Avaliação geral da qualidade: 1=muito ruim, 2=ruim, 3=regular, 4=bom, 5=excelente.'},
+  {id:'ops', label:'Operações', icon:'⚙️', bg:'#18243A', fields:[
+    {k:'proc_map',  label:'Processos documentados/mapeados (%)',   tipo:'num', ph:'Ex: 40'},
+    {k:'proc_crit', label:'Nº de processos críticos',              tipo:'num', ph:'Ex: 5'},
+    {k:'tempo_exec',label:'Tempo médio de execução do processo crítico principal (dias)', tipo:'num', ph:'Ex: 3'},
+    {k:'retrab',    label:'Taxa de retrabalho/erros (%)',          tipo:'num', ph:'Ex: 15'},
+    {k:'cap_prod',  label:'Capacidade produtiva utilizada (%)',    tipo:'num', ph:'Ex: 70'},
+    {k:'automacao', label:'Grau de automação (1=nenhum · 5=alto)', tipo:'esc'},
+    {k:'falhas',    label:'Falhas/gargalos (últimos 3 meses)',     tipo:'num', ph:'Ex: 4'},
+    {k:'qualidade', label:'Qualidade dos produtos/serviços (1–5)', tipo:'esc'},
   ]},
-  {id:'rh',label:'RH / Pessoas',icon:'👥',bg:'#2A182D',fields:[
-    {k:'turnover',label:'Turnover anual (%)',                       tipo:'num',ph:'Ex: 20',
-     tip:'Porcentagem de funcionários que saíram no último ano. Substituir 1 colaborador custa entre 50% e 200% do salário anual.'},
-    {k:'absen',   label:'Absenteísmo mensal (%)',                   tipo:'num',ph:'Ex: 5',
-     tip:'Porcentagem de faltas e atrasos em relação ao total de horas. Acima de 5% impacta diretamente a produtividade.'},
-    {k:'sem_resp',label:'Funções sem responsável definido (%)',     tipo:'num',ph:'Ex: 30',
-     tip:'Porcentagem de cargos/funções sem um responsável claramente definido. Indica falta de organograma.'},
-    {k:'hext',    label:'Horas extras médias por funcionário/mês',  tipo:'num',ph:'Ex: 8',
-     tip:'Média de horas extras por colaborador. Alto índice indica subdimensionamento da equipe.'},
-    {k:'satisf',  label:'Satisfação da equipe (1–5)',               tipo:'esc',
-     tip:'Avaliação da satisfação geral da equipe: 1=muito insatisfeita, 5=muito satisfeita.'},
-    {k:'trein',   label:'Treinamentos realizados no ano',           tipo:'num',ph:'Ex: 3',
-     tip:'Número de treinamentos ou capacitações realizados para a equipe no último ano.'},
+  {id:'rh', label:'RH / Pessoas', icon:'👥', bg:'#2A182D', fields:[
+    {k:'turnover', label:'Turnover anual (%)',                        tipo:'num', ph:'Ex: 20'},
+    {k:'absen',    label:'Absenteísmo médio mensal (%)',              tipo:'num', ph:'Ex: 5'},
+    {k:'sem_resp', label:'Funções sem responsável definido (%)',      tipo:'num', ph:'Ex: 30'},
+    {k:'hext',     label:'Horas extras médias por funcionário/mês',  tipo:'num', ph:'Ex: 8'},
+    {k:'satisf',   label:'Satisfação da equipe (1–5)',               tipo:'esc'},
+    {k:'trein',    label:'Treinamentos realizados/ano',              tipo:'num', ph:'Ex: 3'},
   ]},
-  {id:'est',label:'Estoque',icon:'📦',bg:'#2D1818',fields:[
-    {k:'giro',     label:'Giro de estoque (vezes/mês)',   tipo:'num',ph:'Ex: 4',
-     tip:'Quantas vezes o estoque completo é renovado por mês. Estoque parado = capital parado = prejuízo.'},
-    {k:'cobertura',label:'Cobertura de estoque (dias)',   tipo:'num',ph:'Ex: 30',
-     tip:'Quantos dias de vendas o estoque atual consegue cobrir. Ex: com estoque de R$50k e vendas de R$5k/dia, cobertura = 10 dias.'},
-    {k:'ruptura',  label:'Ruptura de estoque (%)',        tipo:'num',ph:'Ex: 8',
-     tip:'Porcentagem das vezes em que faltou produto quando o cliente precisava. Cada ruptura é uma venda perdida.'},
-    {k:'perda',    label:'Perdas/vencimentos (%)',        tipo:'num',ph:'Ex: 3',
-     tip:'Porcentagem do estoque perdida por vencimento, dano ou obsolescência.'},
+  {id:'est', label:'Estoque', icon:'📦', bg:'#2D1818', fields:[
+    {k:'giro',      label:'Giro de estoque (vezes/mês)',    tipo:'num', ph:'Ex: 4'},
+    {k:'cobertura', label:'Cobertura de estoque (dias)',    tipo:'num', ph:'Ex: 30'},
+    {k:'ruptura',   label:'Ruptura de estoque (%)',         tipo:'num', ph:'Ex: 8'},
+    {k:'perda',     label:'Perdas ou vencimentos (%)',      tipo:'num', ph:'Ex: 3'},
   ]},
-  {id:'vnd',label:'Vendas',icon:'📈',bg:'#2D2518',fields:[
-    {k:'cli_ativos',label:'Clientes ativos (últimos 3 meses)', tipo:'num',ph:'Ex: 120',
-     tip:'Clientes que fizeram pelo menos uma compra nos últimos 3 meses.'},
-    {k:'conv',     label:'Taxa de conversão de leads (%)',     tipo:'num',ph:'Ex: 18',
-     tip:'Porcentagem de contatos/leads que se tornaram clientes. Ex: de 100 contatos, 20 compraram = 20%.'},
-    {k:'ciclo',    label:'Ciclo médio de vendas (dias)',       tipo:'num',ph:'Ex: 7',
-     tip:'Dias médios desde o primeiro contato até o fechamento da venda.'},
-    {k:'recomp',   label:'Clientes recorrentes (%)',           tipo:'num',ph:'Ex: 35',
-     tip:'Porcentagem de clientes que compraram mais de uma vez no período analisado.'},
-    {k:'nps',      label:'Satisfação / NPS (0–100)',           tipo:'num',ph:'Ex: 60',
-     tip:'Nota de satisfação dos clientes de 0 a 100. Acima de 50 é bom, acima de 70 é excelente.'},
+  {id:'vnd', label:'Vendas', icon:'📈', bg:'#2D2518', fields:[
+    {k:'cli_ativos', label:'Clientes ativos (últimos 3 meses)',      tipo:'num', ph:'Ex: 120'},
+    {k:'conv',       label:'Taxa de conversão de leads (%)',         tipo:'num', ph:'Ex: 18'},
+    {k:'ciclo',      label:'Ciclo médio de vendas (dias)',           tipo:'num', ph:'Ex: 7'},
+    {k:'recomp',     label:'Clientes recorrentes (%)',               tipo:'num', ph:'Ex: 35'},
+    {k:'nps',        label:'Satisfação / NPS estimado (0–100)',      tipo:'num', ph:'Ex: 60'},
   ]},
-  {id:'tec',label:'Tecnologia',icon:'💻',bg:'#18242D',fields:[
-    {k:'integ',   label:'Integração de sistemas (1–5)',   tipo:'esc',
-     tip:'Nível de integração entre os sistemas da empresa: 1=sistemas isolados/manuais, 5=totalmente integrados.'},
-    {k:'backup',  label:'Backup e segurança de dados (1–5)',tipo:'esc',
-     tip:'Nível de proteção dos dados: 1=sem backup, 3=backup manual esporádico, 5=backup automático em nuvem.'},
-    {k:'auto_tec',label:'Automação tecnológica (1–5)',    tipo:'esc',
-     tip:'Nível de automação com tecnologia: 1=tudo manual, 5=altamente automatizado com sistemas integrados.'},
-    {k:'infra',   label:'Infraestrutura de TI (1–5)',     tipo:'esc',
-     tip:'Qualidade dos equipamentos e infraestrutura: 1=equipamentos obsoletos, 5=infraestrutura moderna e atualizada.'},
+  {id:'tec', label:'Tecnologia', icon:'💻', bg:'#18242D', fields:[
+    {k:'integ',    label:'Integração de sistemas (1–5)',     tipo:'esc'},
+    {k:'backup',   label:'Backup e segurança de dados (1–5)',tipo:'esc'},
+    {k:'auto_tec', label:'Automação de processos (1–5)',     tipo:'esc'},
+    {k:'infra',    label:'Infraestrutura de TI (1–5)',       tipo:'esc'},
   ]},
 ];
 
-// ============================================================
+const REFS={
+  fat:{ref:60000,peso:5}, fat_cli:{ref:500,peso:3}, mb:{ref:30,peso:5}, ml:{ref:12,peso:5},
+  ticket:{ref:300,peso:4}, cfixo:{ref:20000,peso:3,inv:true}, cvar:{ref:25000,peso:3,inv:true},
+  inadim:{ref:5,peso:4,inv:true}, divida:{ref:20,peso:4,inv:true}, rentab:{ref:18,peso:4},
+  proc_map:{ref:70,peso:4}, retrab:{ref:5,peso:5,inv:true}, cap_prod:{ref:75,peso:4},
+  falhas:{ref:2,peso:4,inv:true}, turnover:{ref:15,peso:5,inv:true}, absen:{ref:3,peso:4,inv:true},
+  sem_resp:{ref:10,peso:4,inv:true}, ruptura:{ref:5,peso:5,inv:true}, conv:{ref:20,peso:5},
+  giro:{ref:4,peso:4}
+};
+
+// =====================================================
 // STATE
-// ============================================================
-let meses=[];
-let mesAtivo=0;
-let vals={};    // vals["dep-k-mesIdx"] = valor
-let nsVals={};  // nsVals["dep-k-mesIdx"] = true (não sei)
-let mesesOk=new Set();
+// =====================================================
+let mesAtual = [];
+let mesSel = 0;
+let vals = {};
+let naoSeiVals = {}; // naoSeiVals["dep-k-mesIdx"] = true
+let mesesCompletos = new Set();
 
-function getMeses(n){
-  const hoje=new Date();
-  const r=[];
-  for(let i=n-1;i>=0;i--){
-    const d=new Date(hoje.getFullYear(),hoje.getMonth()-i,1);
-    r.push({idx:n-1-i,nome:d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','/').replace(' ','')});
-  }
-  return r;
-}
-
-// ============================================================
-// BUILD FORM
-// ============================================================
-function buildMeses(){
-  const n=parseInt(document.getElementById('f-periodo').value)||3;
-  meses=getMeses(n);
-  mesAtivo=0;
-  vals={};nsVals={};mesesOk=new Set();
-
-  if(n===1){
-    document.getElementById('meses-nav').style.display='none';
-    document.getElementById('mes-badge').style.display='none';
-    document.getElementById('barra-nav').style.display='none';
-  } else {
-    document.getElementById('meses-nav').style.display='block';
-    document.getElementById('mes-badge').style.display='block';
-    document.getElementById('barra-nav').style.display='flex';
-    buildMesesBtns();
-  }
-  buildFormBody(0);
-  document.getElementById('sec-final').style.display = n===1?'block':'none';
-}
-
-function buildMesesBtns(){
-  const wrap=document.getElementById('meses-btns');
-  wrap.innerHTML=meses.map((m,i)=>
-    `<button id="mb-${i}" onclick="irMes(${i})" style="padding:8px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:2px solid var(--border);background:var(--bg3);color:var(--muted);transition:all .2s">${m.nome}</button>`
-  ).join('');
-  atualizarBtns();
-}
-
-function atualizarBtns(){
-  meses.forEach((_,i)=>{
-    const b=document.getElementById('mb-'+i);
-    if(!b)return;
-    b.style.borderColor=i===mesAtivo?'var(--blue)':mesesOk.has(i)?'var(--green)':'var(--border)';
-    b.style.background=i===mesAtivo?'var(--blue-bg)':mesesOk.has(i)?'var(--green-bg)':'var(--bg3)';
-    b.style.color=i===mesAtivo?'var(--blue)':mesesOk.has(i)?'var(--green)':'var(--muted)';
-  });
-  const done=mesesOk.size;
-  const pct=meses.length?Math.round(done/meses.length*100):0;
-  const prog=document.getElementById('meses-prog');
-  if(prog)prog.style.width=pct+'%';
-  const st=document.getElementById('meses-status');
-  if(st)st.textContent=done+' de '+meses.length+' meses preenchidos';
-  // Botão enviar só aparece quando todos ok
-  const n=parseInt(document.getElementById('f-periodo').value)||3;
-  if(n>1){
-    const btnEnv=document.getElementById('btn-enviar');
-    const secFinal=document.getElementById('sec-final');
-    if(done>=meses.length){
-      if(secFinal)secFinal.style.display='block';
-    }
-  }
-}
-
-function buildFormBody(idx){
-  mesAtivo=idx;
-  const body=document.getElementById('form-body');
-  if(!body)return;
-  const isSingle=meses.length===1;
-  const mesIdx=isSingle?0:idx;
-
-  // Update badge
-  const badge=document.getElementById('mes-badge-txt');
-  if(badge&&meses[mesIdx])badge.textContent='Preenchendo: '+meses[mesIdx].nome;
-  const bb=document.getElementById('bb-mes');
-  if(bb&&meses[mesIdx])bb.textContent=meses[mesIdx].nome;
-
-  let html='';
-  DEPS.forEach(dep=>{
-    html+=`<div class="sec">
-      <div class="sec-title">
-        <div class="sec-icon" style="background:${dep.bg}">${dep.icon}</div>
-        ${dep.label}
-      </div>
-      <div class="g2">`;
-    dep.fields.forEach(f=>{
-      const key=`${dep.id}-${f.k}-${mesIdx}`;
-      const isNS=nsVals[key]||false;
-      const savedVal=vals[key];
-      const tip=f.tip?`<span class="tip" data-tip="${f.tip.replace(/"/g,"'")}">?</span>`:'';
-      html+=`<div class="field">
-        <div class="field-label">${f.label} ${tip}</div>`;
-      if(f.tipo==='esc'){
-        html+=`<div>
-          <div class="scale-row" id="sr-${key}">
-            ${[1,2,3,4,5].map(v=>`<button class="s-btn ${!isNS&&savedVal===v?'on':''}" id="sb-${key}-${v}" onclick="setScale('${dep.id}','${f.k}',${mesIdx},${v})" ${isNS?'disabled':''} style="${isNS?'opacity:.4':''}">   ${v}</button>`).join('')}
-            <button class="ns-btn ${isNS?'on':''}" id="ns-${key}" onclick="toggleNS('${dep.id}','${f.k}',${mesIdx},'esc')">Não sei</button>
-          </div>
-          ${f.cond?`<div id="cond-${key}" style="display:${!isNS&&savedVal>=4?'block':'none'}">
-            <div class="cond-box">
-              <div style="font-size:10px;color:var(--teal);font-weight:600;margin-bottom:8px">🤖 Detalhe a automação:</div>
-              <div class="field"><div class="field-label">Sistemas/ferramentas utilizados</div><input id="auto-sis-${mesIdx}" placeholder="Ex: ERP, CRM, planilha..." value="${vals['auto-sis-'+mesIdx]||''}"></div>
-              <div class="field"><div class="field-label">Equipamentos automatizados</div><input id="auto-eq-${mesIdx}" placeholder="Ex: máquinas CNC..." value="${vals['auto-eq-'+mesIdx]||''}"></div>
-              <div class="field"><div class="field-label">Observações</div><textarea id="auto-obs-${mesIdx}" rows="2" placeholder="Como funciona a automação...">${vals['auto-obs-'+mesIdx]||''}</textarea></div>
-            </div>
-          </div>`:''}
-        </div>`;
-      } else {
-        html+=`<div class="input-row">
-          <input type="number" id="inp-${key}" placeholder="${f.ph||''}" min="0" value="${!isNS&&savedVal?savedVal:''}" ${isNS?'disabled':''} style="${isNS?'opacity:.4':''}" oninput="onInp('${dep.id}','${f.k}',${mesIdx},this.value)" class="${!isNS&&savedVal?'ok':''}">
-          <button class="ns-btn ${isNS?'on':''}" id="ns-${key}" onclick="toggleNS('${dep.id}','${f.k}',${mesIdx},'num')">Não sei</button>
-        </div>`;
-      }
-      html+=`</div>`;
+function getMesesRetroativos(n){
+  const hoje = new Date();
+  const lista = [];
+  for(let i=n-1; i>=0; i--){
+    const d = new Date(hoje.getFullYear(), hoje.getMonth()-i, 1);
+    lista.push({
+      idx: n-1-i,
+      nome: d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','').replace(' ','/')
     });
-    html+=`</div>
-      <div class="field" style="margin-top:8px">
-        <div class="field-label">Observações — ${dep.label} (opcional)</div>
-        <textarea id="obs-${dep.id}-${mesIdx}" rows="2" placeholder="Contexto adicional...">${vals['obs-'+dep.id+'-'+mesIdx]||''}</textarea>
+  }
+  return lista;
+}
+
+// =====================================================
+// INICIAR
+// =====================================================
+function iniciarDiagnostico(){
+  const nome = document.getElementById('c-nome').value.trim();
+  const ramoEl = document.getElementById('c-ramo');
+  let ramo = ramoEl.value;
+  if(ramo === 'Outros'){
+    const outros = document.getElementById('c-ramo-outros').value.trim();
+    if(outros) ramo = outros;
+  }
+  const func = document.getElementById('c-func').value;
+
+  const erros = [];
+  if(!nome) erros.push('Nome da empresa');
+  if(!ramo) erros.push('Setor de atuação');
+  if(!document.getElementById('c-estado').value) erros.push('Estado');
+  if(!document.getElementById('c-cidade').value.trim()) erros.push('Cidade');
+  if(!func) erros.push('Número de funcionários');
+
+  if(erros.length > 0){
+    document.getElementById('inicial-msg').innerHTML = `<span style="color:var(--red)">⚠ Preencha os campos obrigatórios: <strong>${erros.join(', ')}</strong></span>`;
+    return;
+  }
+
+  const n = parseInt(document.getElementById('c-periodo').value)||3;
+  mesAtual = getMesesRetroativos(n);
+  mesSel = 0;
+  mesesCompletos = new Set();
+
+  document.getElementById('tela-inicial').style.display = 'none';
+  document.getElementById('tela-form').style.display = 'block';
+  buildFormSections();
+  atualizarDepsVisiveis();
+
+  if(n === 1){
+    document.getElementById('stepper').style.display = 'none';
+    document.getElementById('mes-badge').style.display = 'none';
+    document.getElementById('bottom-bar').style.display = 'none';
+    document.getElementById('sec-contexto').style.display = 'block';
+    DEPS.forEach(dep => dep.fields.forEach(f => {
+      const el = f.tipo==='esc'
+        ? document.getElementById(`sg-${dep.id}-${f.k}-0`)
+        : document.getElementById(`inp-${dep.id}-${f.k}-0`);
+      if(el) el.style.display = f.tipo==='esc' ? 'flex' : '';
+    }));
+    mesesCompletos.add(0);
+    document.getElementById('btn-enviar').style.display = 'block';
+  } else {
+    document.getElementById('bottom-bar').style.display = 'flex';
+    renderStepper();
+    renderMes(0);
+  }
+}
+
+// =====================================================
+// BUILD FORM SECTIONS
+// =====================================================
+function buildFormSections(){
+  let html = '';
+  DEPS.forEach(dep => {
+    html += `<div class="sec" id="sec-${dep.id}">
+      <div class="sec-title"><div class="area-ico" style="background:${dep.bg}">${dep.icon}</div>${dep.label}</div>
+      <div class="g2">`;
+    dep.fields.forEach(f => {
+      const tip = TIPS[f.k] ? `<span class="tip" data-tip="${TIPS[f.k].replace(/"/g,"'")}">?</span>` : '';
+      html += `<div class="q-row" id="row-${dep.id}-${f.k}">
+        <label>${f.label} ${tip}</label>`;
+      if(f.tipo === 'esc'){
+        mesAtual.forEach((m,i) => {
+          html += `<div style="display:none" id="sg-${dep.id}-${f.k}-${i}">
+            <div class="scale-wrap">
+              ${[1,2,3,4,5].map(v=>`<button class="s-btn" id="sb-${dep.id}-${f.k}-${i}-${v}" onclick="setScale('${dep.id}','${f.k}',${i},${v})">${v}</button>`).join('')}
+            </div>
+            <button class="nao-sei-btn" id="ns-${dep.id}-${f.k}-${i}" onclick="toggleNaoSei('${dep.id}','${f.k}',${i},'esc')">Não sei / Não se aplica</button>
+          </div>`;
+        });
+      } else {
+        mesAtual.forEach((m,i) => {
+          html += `<div style="display:none" id="inp-wrap-${dep.id}-${f.k}-${i}">
+            <input type="number" id="inp-${dep.id}-${f.k}-${i}" placeholder="${f.ph||''}" oninput="onInput('${dep.id}','${f.k}',${i},this.value)" min="0">
+            <button class="nao-sei-btn" id="ns-${dep.id}-${f.k}-${i}" onclick="toggleNaoSei('${dep.id}','${f.k}',${i},'num')">Não sei / Não se aplica</button>
+          </div>`;
+        });
+      }
+      // Campo especial para automação
+      if(f.k === 'automacao'){
+        mesAtual.forEach((m,i) => {
+          html += `<div id="auto-cond-${i}" style="display:none">
+            <div class="cond-fields">
+              <div style="font-size:11px;color:var(--teal);font-weight:600;margin-bottom:8px">🤖 Detalhe a automação utilizada:</div>
+              <div class="q-row"><label>Sistemas/ferramentas utilizados</label>
+                <input id="auto-sistemas-${i}" placeholder="Ex: ERP, CRM, planilha automatizada...">
+              </div>
+              <div class="q-row"><label>Equipamentos automatizados</label>
+                <input id="auto-equip-${i}" placeholder="Ex: máquinas CNC, impressoras automáticas...">
+              </div>
+              <div class="q-row"><label>Observações sobre a automação</label>
+                <textarea id="auto-obs-${i}" rows="2" placeholder="Descreva como a automação funciona na sua empresa..."></textarea>
+              </div>
+            </div>
+          </div>`;
+        });
+      }
+      html += `</div>`;
+    });
+    html += `</div>
+      <div class="q-row" style="margin-top:6px">
+        <label>Observações — ${dep.label} (opcional)
+          <span class="tip" data-tip="Use este espaço para adicionar contexto, explicações ou situações especiais sobre este departamento.">?</span>
+        </label>
+        <textarea id="obs-${dep.id}" rows="2" placeholder="Contexto adicional sobre ${dep.label.toLowerCase()}..."></textarea>
       </div>
     </div>`;
   });
-  body.innerHTML=html;
-  calcProg();
-  atualizarBtns();
+  document.getElementById('form-sections').innerHTML = html;
+}
 
-  // Barra nav
-  const btnAnt=document.getElementById('btn-ant');
-  const btnProx=document.getElementById('btn-prox');
-  const isLast=mesAtivo===meses.length-1;
-  if(btnAnt){btnAnt.disabled=mesAtivo===0;btnAnt.style.opacity=mesAtivo===0?'.4':'1';}
-  if(btnProx){
-    btnProx.textContent=isLast?'Finalizar ✓':'Próximo →';
-    btnProx.style.background=isLast?'var(--green)':'var(--blue)';
+// =====================================================
+// NAO SEI
+// =====================================================
+function toggleNaoSei(depId, k, mesIdx, tipo){
+  const key = `${depId}-${k}-${mesIdx}`;
+  const btn = document.getElementById(`ns-${depId}-${k}-${mesIdx}`);
+  if(naoSeiVals[key]){
+    naoSeiVals[key] = false;
+    vals[key] = 0;
+    if(btn) btn.classList.remove('ativo');
+    if(tipo === 'esc'){
+      for(let v=1;v<=5;v++){
+        const b=document.getElementById(`sb-${depId}-${k}-${mesIdx}-${v}`);
+        if(b){b.classList.remove('sel','sel-ns');b.disabled=false;}
+      }
+    } else {
+      const inp = document.getElementById(`inp-${depId}-${k}-${mesIdx}`);
+      if(inp){inp.disabled=false;inp.value='';inp.className='';}
+    }
+  } else {
+    naoSeiVals[key] = true;
+    vals[key] = -1; // -1 = não sei
+    if(btn) btn.classList.add('ativo');
+    if(tipo === 'esc'){
+      for(let v=1;v<=5;v++){
+        const b=document.getElementById(`sb-${depId}-${k}-${mesIdx}-${v}`);
+        if(b){b.classList.remove('sel');b.classList.add('sel-ns');b.disabled=true;}
+      }
+    } else {
+      const inp = document.getElementById(`inp-${depId}-${k}-${mesIdx}`);
+      if(inp){inp.disabled=true;inp.value='';inp.placeholder='Não sei / N/A';inp.className='';}
+    }
   }
-  const bbOk=document.getElementById('bb-ok');
-  if(bbOk)bbOk.textContent=mesesOk.has(mesAtivo)?'✓ Mês preenchido':'';
+}
 
+// =====================================================
+// RENDERIZAR MÊS
+// =====================================================
+function renderMes(idx){
+  mesSel = idx;
+  const m = mesAtual[idx];
+  const isLast = idx === mesAtual.length-1;
+  document.getElementById('mes-badge').innerHTML = `📅 Preenchendo: <strong style="color:#fff">${m.nome}</strong>`;
+
+  DEPS.forEach(dep => {
+    dep.fields.forEach(f => {
+      mesAtual.forEach((_,i) => {
+        const show = i === idx;
+        if(f.tipo === 'esc'){
+          const el = document.getElementById(`sg-${dep.id}-${f.k}-${i}`);
+          if(el) el.style.display = show ? 'block' : 'none';
+          if(show){
+            const saved = vals[`${dep.id}-${f.k}-${i}`];
+            const isNS = naoSeiVals[`${dep.id}-${f.k}-${i}`];
+            for(let v=1;v<=5;v++){
+              const b=document.getElementById(`sb-${dep.id}-${f.k}-${i}-${v}`);
+              if(b){b.classList.toggle('sel',!isNS&&v===saved);b.classList.toggle('sel-ns',isNS);b.disabled=isNS;}
+            }
+            const nsBtn=document.getElementById(`ns-${dep.id}-${f.k}-${i}`);
+            if(nsBtn) nsBtn.classList.toggle('ativo',isNS);
+          }
+        } else {
+          const wrap = document.getElementById(`inp-wrap-${dep.id}-${f.k}-${i}`);
+          if(wrap) wrap.style.display = show ? 'block' : 'none';
+          if(show){
+            const saved = vals[`${dep.id}-${f.k}-${i}`];
+            const isNS = naoSeiVals[`${dep.id}-${f.k}-${i}`];
+            const inp = document.getElementById(`inp-${dep.id}-${f.k}-${i}`);
+            if(inp){
+              inp.value = saved && saved !== -1 ? saved : '';
+              inp.disabled = isNS;
+              inp.placeholder = isNS ? 'Não sei / N/A' : (f.ph||'');
+              inp.className = saved && saved !== -1 ? 'filled' : '';
+            }
+            const nsBtn=document.getElementById(`ns-${dep.id}-${f.k}-${i}`);
+            if(nsBtn) nsBtn.classList.toggle('ativo',isNS);
+          }
+        }
+        // Campo condicional automação
+        if(f.k === 'automacao'){
+          const condEl = document.getElementById(`auto-cond-${i}`);
+          if(condEl){
+            const v = vals[`${dep.id}-automacao-${i}`];
+            condEl.style.display = (show && v >= 4) ? 'block' : 'none';
+          }
+        }
+      });
+    });
+  });
+
+  document.getElementById('sec-contexto').style.display = isLast ? 'block' : 'none';
+  checkProntoParaEnviar();
+  document.getElementById('bb-mes-atual').textContent = m.nome;
+  const completo = mesesCompletos.has(idx);
+  document.getElementById('bb-status').innerHTML = completo
+    ? '<span style="color:var(--green)">✓ Mês completo</span>'
+    : '<span style="color:var(--yellow)">Preencha os campos acima</span>';
+  document.getElementById('btn-anterior').disabled = idx===0;
+  document.getElementById('btn-anterior').style.opacity = idx===0?'0.4':'1';
+  document.getElementById('btn-proximo').textContent = isLast ? 'Finalizar →' : 'Próximo →';
+  document.getElementById('btn-proximo').className = isLast ? 'btn btn-success btn-sm' : 'btn btn-blue btn-sm';
+  document.querySelectorAll('.m-bubble').forEach((b,i) => {
+    b.classList.remove('active');
+    if(i===idx) b.classList.add('active');
+  });
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function irMes(idx){
-  salvarObs();
-  mesAtivo=idx;
-  buildFormBody(idx);
+function renderStepper(){
+  const n = mesAtual.length;
+  document.getElementById('stepper-title').textContent = `Diagnóstico — ${n} mês${n>1?'es':''}`;
+  document.getElementById('month-bubbles').innerHTML = mesAtual.map((m,i) =>
+    `<div class="m-bubble ${i===0?'active':''}" id="bubble-${i}" onclick="irParaMes(${i})"><span>${m.nome}</span></div>`
+  ).join('');
+  updateStepper();
 }
 
-function navMes(delta){
-  salvarObs();
-  const next=mesAtivo+delta;
-  if(next<0)return;
-  if(next>=meses.length){
-    // Finalizar
-    salvarObs();
-    verificarMes();
-    document.getElementById('sec-final').style.display='block';
-    window.scrollTo({top:0,behavior:'smooth'});
-    return;
-  }
-  verificarMes();
-  buildFormBody(next);
-}
-
-function salvarObs(){
-  DEPS.forEach(dep=>{
-    const el=document.getElementById('obs-'+dep.id+'-'+mesAtivo);
-    if(el)vals['obs-'+dep.id+'-'+mesAtivo]=el.value;
+function updateStepper(){
+  const n = mesAtual.length;
+  const done = mesesCompletos.size;
+  const pct = Math.round((done/n)*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-bar').style.background = pct===100?'var(--green)':pct>50?'var(--yellow)':'var(--blue)';
+  document.getElementById('stepper-pct').textContent = `${done} de ${n} meses completos`;
+  document.getElementById('prog-topbar').textContent = pct+'% preenchido';
+  mesAtual.forEach((_,i) => {
+    const b=document.getElementById(`bubble-${i}`);
+    if(!b)return;
+    b.classList.remove('done','active');
+    if(mesesCompletos.has(i)) b.classList.add('done');
+    if(i===mesSel) b.classList.add('active');
   });
-  // Salvar campos auto
-  const sisEl=document.getElementById('auto-sis-'+mesAtivo);
-  const eqEl=document.getElementById('auto-eq-'+mesAtivo);
-  const obsEl=document.getElementById('auto-obs-'+mesAtivo);
-  if(sisEl)vals['auto-sis-'+mesAtivo]=sisEl.value;
-  if(eqEl)vals['auto-eq-'+mesAtivo]=eqEl.value;
-  if(obsEl)vals['auto-obs-'+mesAtivo]=obsEl.value;
 }
 
-function verificarMes(){
-  let preench=0,total=0;
-  DEPS.forEach(dep=>{
-    dep.fields.forEach(f=>{
-      total++;
-      const key=`${dep.id}-${f.k}-${mesAtivo}`;
-      if(vals[key]||nsVals[key])preench++;
-    });
-  });
-  if(preench>=Math.ceil(total*0.25))mesesOk.add(mesAtivo);
-  atualizarBtns();
+function irMes(delta){
+  salvarMesAtual();
+  const next = mesSel + delta;
+  if(next>=0 && next<mesAtual.length) irParaMes(next);
+  else if(next>=mesAtual.length){ salvarMesAtual(); checkProntoParaEnviar(); irParaMes(mesAtual.length-1); }
+}
+function irParaMes(idx){ salvarMesAtual(); renderMes(idx); updateStepper(); }
+
+function salvarMesAtual(){
+  let preenchidos=0, total=0;
+  DEPS.forEach(dep => dep.fields.forEach(f => {
+    total++;
+    const v = vals[`${dep.id}-${f.k}-${mesSel}`];
+    if(v !== undefined && v !== null && v !== 0) preenchidos++;
+  }));
+  if(preenchidos >= Math.ceil(total*0.25)) mesesCompletos.add(mesSel);
+  updateStepper();
 }
 
-// ============================================================
+function checkProntoParaEnviar(){
+  const ok = mesesCompletos.size === mesAtual.length;
+  const btn = document.getElementById('btn-enviar');
+  const alrt = document.getElementById('alert-pronto');
+  if(btn) btn.style.display = ok ? 'block' : 'none';
+  if(alrt) alrt.style.display = ok ? 'block' : 'none';
+}
+
+// =====================================================
 // INPUTS
-// ============================================================
-function onInp(depId,k,mesIdx,v){
-  const key=`${depId}-${k}-${mesIdx}`;
-  const num=parseFloat(v);
-  vals[key]=isNaN(num)?0:num;
-  const inp=document.getElementById('inp-'+key);
-  if(inp)inp.className=num>0?'ok':'';
-  calcProg();
-}
-
-function setScale(depId,k,mesIdx,v){
-  const key=`${depId}-${k}-${mesIdx}`;
-  if(nsVals[key])return;
-  vals[key]=v;
+// =====================================================
+function setScale(depId, k, mesIdx, v){
+  const key = `${depId}-${k}-${mesIdx}`;
+  if(naoSeiVals[key]) return;
+  vals[key] = v;
   for(let i=1;i<=5;i++){
-    const b=document.getElementById(`sb-${key}-${i}`);
-    if(b)b.classList.toggle('on',i===v);
+    const b=document.getElementById(`sb-${depId}-${k}-${mesIdx}-${i}`);
+    if(b) b.classList.toggle('sel', i===v);
   }
-  // Campo condicional automação
-  if(k==='automacao'){
-    const cond=document.getElementById('cond-'+key);
-    if(cond)cond.style.display=v>=4?'block':'none';
+  // Mostrar campo condicional de automação
+  if(k === 'automacao'){
+    const condEl = document.getElementById(`auto-cond-${mesIdx}`);
+    if(condEl) condEl.style.display = v >= 4 ? 'block' : 'none';
   }
-  calcProg();
 }
 
-function toggleNS(depId,k,mesIdx,tipo){
-  const key=`${depId}-${k}-${mesIdx}`;
-  nsVals[key]=!nsVals[key];
-  const btn=document.getElementById('ns-'+key);
-  if(btn)btn.classList.toggle('on',nsVals[key]);
-  if(tipo==='esc'){
-    for(let i=1;i<=5;i++){
-      const b=document.getElementById(`sb-${key}-${i}`);
-      if(b){b.disabled=nsVals[key];b.style.opacity=nsVals[key]?'.4':'1';}
-    }
-  } else {
-    const inp=document.getElementById('inp-'+key);
-    if(inp){
-      inp.disabled=nsVals[key];
-      inp.style.opacity=nsVals[key]?'.4':'1';
-      inp.placeholder=nsVals[key]?'Não sei / N/A':(DEPS.find(d=>d.id===depId)?.fields.find(f=>f.k===k)?.ph||'');
-      if(nsVals[key])inp.value='';
-    }
-  }
-  vals[key]=nsVals[key]?-1:0;
-  calcProg();
+function onInput(depId, k, mesIdx, v){
+  const key = `${depId}-${k}-${mesIdx}`;
+  if(naoSeiVals[key]) return;
+  const num = parseFloat(v);
+  vals[key] = isNaN(num) ? 0 : num;
+  const inp = document.getElementById(`inp-${depId}-${k}-${mesIdx}`);
+  if(inp) inp.className = num > 0 ? 'filled' : '';
 }
 
-// ============================================================
-// PROGRESSO
-// ============================================================
-function calcProg(){
-  let total=0,preench=0;
-  DEPS.forEach(dep=>{
-    dep.fields.forEach(f=>{
-      meses.forEach((_,i)=>{
-        total++;
-        const key=`${dep.id}-${f.k}-${i}`;
-        if(vals[key]||nsVals[key])preench++;
-      });
-    });
-  });
-  const pct=total?Math.round(preench/total*100):0;
-  const pb=document.getElementById('prog-bar');
-  if(pb)pb.style.width=pct+'%';
-  const pt=document.getElementById('prog-txt');
-  if(pt)pt.textContent=pct+'% preenchido';
-}
-
-// ============================================================
+// =====================================================
 // HELPERS
-// ============================================================
+// =====================================================
 function mascaraTel(el){
-  let v=el.value.replace(/\D/g,'');
-  if(v.length>11)v=v.slice(0,11);
-  if(v.length>10)v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
-  else if(v.length>6)v='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
-  else if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2);
-  el.value=v;
+  let v = el.value.replace(/\D/g,'');
+  if(v.length > 11) v = v.slice(0,11);
+  if(v.length > 10)
+    v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  else if(v.length > 6)
+    v = '(' + v.slice(0,2) + ') ' + v.slice(2,6) + '-' + v.slice(6);
+  else if(v.length > 2)
+    v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  el.value = v;
 }
 
 function toggleRamoOutros(val){
-  const d=document.getElementById('ramo-outros');
-  if(d)d.style.display=val==='outros'?'block':'none';
+  const d = document.getElementById('ramo-outros-div');
+  if(d) d.style.display = val === 'Outros' ? 'block' : 'none';
 }
 
-// Tooltips
-document.addEventListener('mouseover',e=>{
-  const tip=e.target.closest('.tip');
-  if(!tip)return;
-  const box=document.getElementById('tip-box');
-  box.textContent=tip.dataset.tip;
-  box.style.display='block';
-});
-document.addEventListener('mousemove',e=>{
-  const box=document.getElementById('tip-box');
-  if(box.style.display==='block'){
-    box.style.left=(e.clientX+14)+'px';
-    box.style.top=(e.clientY+12)+'px';
-  }
-});
-document.addEventListener('mouseout',e=>{
-  if(e.target.closest('.tip'))document.getElementById('tip-box').style.display='none';
-});
+function carregarCidades(uf){
+  // API pública do IBGE para cidades
+  const cidEl = document.getElementById('c-cidade');
+  cidEl.value = '';
+  if(!uf) return;
+  // Não bloqueamos, apenas placeholder
+  cidEl.placeholder = 'Digite ou aguarde lista...';
+}
 
-// ============================================================
+function mostrarPolitica(){
+  const m = document.createElement('div');
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  m.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--teal);border-radius:16px;padding:28px;max-width:540px;width:100%;max-height:80vh;overflow-y:auto">
+    <h3 style="color:var(--teal);margin-bottom:14px;font-size:16px">🔒 Política de Confidencialidade</h3>
+    <p style="font-size:13px;color:var(--text);line-height:1.8">
+    Todas as informações fornecidas neste formulário são tratadas com <strong>absoluta confidencialidade</strong> pela Artyva Gestão Administrativa.<br><br>
+    Os dados coletados têm finalidade exclusiva de diagnóstico empresarial e elaboração de plano de ação personalizado.<br><br>
+    Nenhuma informação será compartilhada com terceiros sem autorização prévia e expressa do cliente.<br><br>
+    As respostas são armazenadas em ambiente seguro e criptografado (Supabase/PostgreSQL com SSL).<br><br>
+    Os dados são utilizados somente pela consultora responsável pelo diagnóstico.<br><br>
+    O cliente pode solicitar a exclusão de seus dados a qualquer momento pelo WhatsApp +55 11 2368-4091.
+    </p>
+    <button onclick="this.closest('div[style*=fixed]').remove()" class="btn btn-teal" style="margin-top:16px;width:100%">Entendi ✓</button>
+  </div>`;
+  document.body.appendChild(m);
+}
+
+// =====================================================
+// EXCEL
+// =====================================================
+function baixarTemplate(){
+  if(typeof XLSX==='undefined'){alert('Aguarde o carregamento da página...');return;}
+  const n = parseInt(document.getElementById('c-periodo').value)||3;
+  const meses = getMesesRetroativos(n);
+  const wb = XLSX.utils.book_new();
+
+  const wsI = XLSX.utils.aoa_to_sheet([
+    ['TEMPLATE ARTYVA — DIAGNÓSTICO EMPRESARIAL'],[''],
+    ['INSTRUÇÕES DE PREENCHIMENTO:'],
+    ['1. Preencha os valores numéricos nas colunas de cada mês'],
+    ['2. Para campos de escala (1-5), use números inteiros de 1 a 5'],
+    ['3. Para percentuais (%), use apenas o número sem o símbolo (ex: 12.5 para 12,5%)'],
+    ['4. Para valores em R$, use apenas o número (ex: 80000 para R$ 80.000)'],
+    ['5. Não altere os nomes das colunas Departamento, KPI ou Chave'],
+    ['6. Se não souber um valor, deixe a célula em branco'],
+    ['7. Após preencher, salve como .xlsx e faça upload no formulário'],
+    [''],['LAYOUT DE CADA ABA:'],
+    ['- Aba "Identificação": dados gerais da empresa'],
+    ['- Demais abas: uma por departamento, com uma linha por indicador'],
+    ['- Colunas dos meses: preencher com os valores de cada período'],
+  ]);
+  wsI['!cols']=[{wch:70}];
+  XLSX.utils.book_append_sheet(wb,wsI,'Instrucoes');
+
+  const wsId = XLSX.utils.aoa_to_sheet([
+    ['Campo','Valor','Instrução'],
+    ['Nome da empresa','','Razão social ou nome fantasia'],
+    ['Setor','','Ex: Varejo, Serviços, Indústria...'],
+    ['Estado','','Sigla do estado (ex: SP, RJ, MG)'],
+    ['Cidade','','Nome da cidade'],
+    ['Nº funcionários','','Ex: 1-5, 6-20, 21-50, 51-200, 200+'],
+    ['Principais desafios','','Descreva os maiores desafios atuais'],
+    ['Objetivos 12 meses','','Principais metas para o próximo ano'],
+    ['Pontos fortes','','O que a empresa faz bem'],
+    ['Considerações finais','','Observações adicionais'],
+  ]);
+  wsId['!cols']=[{wch:25},{wch:40},{wch:45}];
+  XLSX.utils.book_append_sheet(wb,wsId,'Identificacao');
+
+  DEPS.forEach(dep => {
+    const header = ['Departamento','KPI','Chave',...meses.map(m=>m.nome),'Observações'];
+    const rows = [header, ...dep.fields.map(f=>[dep.label,f.label,f.k,...meses.map(()=>''),''])];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:16},{wch:45},{wch:14},...meses.map(()=>({wch:12})),{wch:30}];
+    XLSX.utils.book_append_sheet(wb,ws,dep.label);
+  });
+
+  // Forcar encoding correto para Excel no Windows (evita caracteres corrompidos)
+  const wopts = {bookType:'xlsx', bookSST:false, type:'binary'};
+  const wbout = XLSX.write(wb, wopts);
+  const buf = new ArrayBuffer(wbout.length);
+  const view = new Uint8Array(buf);
+  for(let i=0; i<wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF;
+  const blob = new Blob([buf], {type:'application/octet-stream'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'template_artyva_diagnostico.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+function importarExcel(input){
+  if(!input.files||!input.files[0])return;
+  if(typeof XLSX==='undefined'){alert('Aguarde...');return;}
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const wb = XLSX.read(e.target.result,{type:'binary'});
+      let importados = 0;
+      if(wb.SheetNames.includes('Identificação')){
+        const data = XLSX.utils.sheet_to_json(wb.Sheets['Identificação'],{header:1});
+        data.forEach(row=>{
+          if(row[0]==='Nome da empresa'&&row[1]) document.getElementById('c-nome').value=row[1];
+          if(row[0]==='Estado'&&row[1]){document.getElementById('c-estado').value=row[1];}
+          if(row[0]==='Cidade'&&row[1]) document.getElementById('c-cidade').value=row[1];
+          if(row[0]==='Principais desafios'&&row[1]) document.getElementById('c-desafios') && (document.getElementById('c-desafios').value=row[1]);
+          if(row[0]==='Objetivos 12 meses'&&row[1]) document.getElementById('c-objetivos') && (document.getElementById('c-objetivos').value=row[1]);
+          if(row[0]==='Pontos fortes'&&row[1]) document.getElementById('c-pontos') && (document.getElementById('c-pontos').value=row[1]);
+          if(row[0]==='Considerações finais'&&row[1]) document.getElementById('c-consideracoes') && (document.getElementById('c-consideracoes').value=row[1]);
+        });
+      }
+      const n = parseInt(document.getElementById('c-periodo').value)||3;
+      mesAtual = getMesesRetroativos(n);
+      DEPS.forEach(dep=>{
+        if(!wb.SheetNames.includes(dep.label))return;
+        const data=XLSX.utils.sheet_to_json(wb.Sheets[dep.label],{header:1});
+        if(data.length<2)return;
+        data.slice(1).forEach(row=>{
+          const k=row[2];if(!k)return;
+          for(let ci=0;ci<n;ci++){
+            const v=parseFloat(row[3+ci]);
+            if(!isNaN(v)&&v>0){vals[`${dep.id}-${k}-${ci}`]=v;importados++;}
+          }
+        });
+      });
+      mesAtual.forEach((_,i)=>mesesCompletos.add(i));
+      if(document.getElementById('tela-form').style.display==='none'){
+        document.getElementById('tela-inicial').style.display='none';
+        document.getElementById('tela-form').style.display='block';
+        document.getElementById('bottom-bar').style.display='flex';
+        buildFormSections();renderStepper();renderMes(0);
+      } else { renderMes(mesSel);updateStepper(); }
+      const msg=document.getElementById('excel-msg');
+      if(msg)msg.innerHTML=`<span style="color:var(--green)">✓ ${importados} valores importados! Confira e clique em Enviar.</span>`;
+      checkProntoParaEnviar();
+    }catch(err){
+      const msg=document.getElementById('excel-msg');
+      if(msg)msg.innerHTML=`<span style="color:var(--red)">Erro: ${err.message}. Use o template baixado.</span>`;
+    }
+  };
+  reader.readAsBinaryString(input.files[0]);
+}
+
+// =====================================================
 // ENVIAR
-// ============================================================
-async function enviar(){
-  const nome=document.getElementById('f-nome').value.trim();
-  const ramoEl=document.getElementById('f-ramo');
-  let ramo=ramoEl.value==='outros'?(document.getElementById('f-ramo-txt')?.value||'Outros'):ramoEl.value;
-  const func=document.getElementById('f-func').value;
-  const estado=document.getElementById('f-estado').value;
-  const cidade=document.getElementById('f-cidade').value;
-  const ddi=document.getElementById('f-ddi').value;
-  const tel=document.getElementById('f-zap').value;
-  const periodo=parseInt(document.getElementById('f-periodo').value)||3;
-
-  if(!nome||!ramo){
-    document.getElementById('msg-envio').innerHTML='<span style="color:var(--red)">⚠ Preencha nome e setor da empresa.</span>';
-    return;
+// =====================================================
+async function enviarFormulario(){
+  const nome = document.getElementById('c-nome').value.trim();
+  let ramo = document.getElementById('c-ramo').value;
+  if(ramo === 'Outros'){
+    const outros = document.getElementById('c-ramo-outros')?.value.trim();
+    if(outros) ramo = outros;
   }
+  const estado = document.getElementById('c-estado').value;
+  const cidade = document.getElementById('c-cidade').value.trim();
+  const func = document.getElementById('c-func').value;
+  const ddi = document.getElementById('c-ddi').value;
+  const tel = document.getElementById('c-zap').value;
+  const data = new Date().toLocaleDateString('pt-BR');
+  const periodo = mesAtual.length;
+  const rows = [];
 
-  // Salvar observações antes de enviar
-  salvarObs();
-
-  const btn=document.getElementById('btn-enviar');
-  btn.textContent='Enviando...';btn.disabled=true;
-
-  const rows=[];
-  const data=new Date().toLocaleDateString('pt-BR');
   DEPS.forEach(dep=>{
     dep.fields.forEach(f=>{
-      meses.forEach((_,i)=>{
-        const key=`${dep.id}-${f.k}-${i}`;
-        const v=parseFloat(vals[key])||0;
-        const naoSei=nsVals[key]||false;
-        const REFS={fat:{ref:60000,peso:5},mb:{ref:30,peso:5},ml:{ref:12,peso:5},
-          ticket:{ref:300,peso:4},inadim:{ref:5,peso:4,inv:true},divida:{ref:20,peso:4,inv:true},
-          rentab:{ref:18,peso:4},proc_map:{ref:70,peso:4},retrab:{ref:5,peso:5,inv:true},
-          cap_prod:{ref:75,peso:4},falhas:{ref:2,peso:4,inv:true},turnover:{ref:15,peso:5,inv:true},
-          absen:{ref:3,peso:4,inv:true},ruptura:{ref:5,peso:5,inv:true},conv:{ref:20,peso:5},giro:{ref:4,peso:4}};
-        const info=REFS[f.k]||{ref:0,peso:3,inv:false};
-        const dev=!naoSei&&info.ref?((info.inv&&v>info.ref*1.25)||(!info.inv&&v<info.ref*0.75&&v>0)):false;
-        rows.push({nome,ramo,cidade:cidade+(estado?'/'+estado:''),func,
+      mesAtual.forEach((_,i)=>{
+        const key = `${dep.id}-${f.k}-${i}`;
+        const v = parseFloat(vals[key])||0;
+        const naoSei = naoSeiVals[key] || false;
+        const info = REFS[f.k]||{ref:0,peso:3,inv:false};
+        const dev = !naoSei && info.ref ? ((info.inv&&v>info.ref*1.25)||(!info.inv&&v<info.ref*0.75&&v>0)) : false;
+        rows.push({
+          nome,ramo,cidade:cidade+'/'+estado,func,
           dep:dep.label,kpi:f.label,k:f.k,
-          val:naoSei?-1:v,peso:info.peso,
-          desvio:dev?'SIM':'NÃO',nao_sabe:naoSei?'SIM':'NÃO',
-          mes:i+1,periodo,ref:info.ref||null,inv:info.inv||false,tipo:f.tipo,data});
+          val:naoSei?-1:v,
+          peso:info.peso,
+          desvio:dev?'SIM':'NÃO',
+          nao_sabe:naoSei?'SIM':'NÃO',
+          mes:i+1,periodo,
+          ref:info.ref||null,
+          inv:info.inv||false,
+          tipo:f.tipo,data
+        });
       });
     });
   });
 
+  const tipoNegocio = document.getElementById('c-tipo-negocio')?.value||'comercio';
   const meta={
-    nome,ramo,cidade,estado,func,tel:ddi+tel.replace(/\D/g,''),periodo,
-    desafios:document.getElementById('f-desafios')?.value||'',
-    objetivos:document.getElementById('f-objetivos')?.value||'',
-    pontos:document.getElementById('f-pontos')?.value||'',
-    consideracoes:document.getElementById('f-consideracoes')?.value||'',
-    data
+    nome,ramo,cidade,estado,func,tel:ddi+tel,
+    tipo_negocio:tipoNegocio,
+    desafios:document.getElementById('c-desafios')?.value||'',
+    objetivos:document.getElementById('c-objetivos')?.value||'',
+    pontos:document.getElementById('c-pontos')?.value||'',
+    consideracoes:document.getElementById('c-consideracoes')?.value||'',
+    periodo,data
   };
 
-  let ok=false;
+  const btn = document.getElementById('btn-enviar');
+  btn.textContent='Enviando...';btn.disabled=true;
+
+  // Verificar ID do link
+  const linkId = new URLSearchParams(window.location.search).get('id');
+  let success = false;
   if(sb){
     try{
+      // Verificar se link já foi usado (por ID único do link)
+      if(linkId){
+        const {data:cliData} = await sb.from('clientes').select('status,link_usado').eq('id',linkId).limit(1);
+        if(cliData&&cliData.length>0&&(cliData[0].status==='Preenchido'||cliData[0].link_usado)){
+          document.getElementById('form-msg').innerHTML='<span style="color:var(--yellow)">⚠ Este formulário já foi preenchido. Se precisar corrigir algo, entre em contato com a Artyva: <strong>+55 11 2368-4091</strong></span>';
+          btn.textContent='✓ Enviar Diagnóstico';btn.disabled=false;
+          // Mostrar tela de já preenchido
+          document.getElementById('tela-form').style.display='none';
+          document.getElementById('bottom-bar').style.display='none';
+          document.getElementById('tela-inicial').style.display='none';
+          document.getElementById('ja-preenchido-screen').style.display='block';
+          return;
+        }
+      }
       await sb.from('diagnosticos').delete().eq('nome',nome);
-      if(rows.length)await sb.from('diagnosticos').insert(rows);
+      if(rows.length) await sb.from('diagnosticos').insert(rows);
       await sb.from('diagnosticos_meta').upsert(meta);
-      await sb.from('monitoramento').insert({nome,acao:'Formulário preenchido',data,
-        hora:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
-      await sb.from('clientes').update({status:'Preenchido'}).eq('nome',nome);
-      ok=true;
+      await sb.from('monitoramento').insert({
+        cliente_id:linkId||null,nome,
+        acao:'Formulário preenchido via link',
+        data,hora:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+      });
+      // Invalidar o link e marcar como preenchido
+      if(linkId){
+        await sb.from('clientes').update({status:'Preenchido',link_usado:true}).eq('id',linkId);
+      } else {
+        await sb.from('clientes').update({status:'Preenchido',link_usado:true}).eq('nome',nome);
+      }
+      success=true;
     }catch(e){
-      document.getElementById('msg-envio').innerHTML='<span style="color:var(--red)">Erro: '+e.message+'</span>';
+      document.getElementById('form-msg').innerHTML=`<span style="color:var(--red)">${e.message}</span>`;
       btn.textContent='✓ Enviar Diagnóstico';btn.disabled=false;return;
     }
   } else {
-    let db=JSON.parse(localStorage.getItem('artyva_db')||'[]');
-    db=db.filter(r=>r.nome!==nome);
-    db=db.concat(rows);db.push({...meta,_meta:true});
+    let db = JSON.parse(localStorage.getItem('artyva_db')||'[]');
+    db = db.filter(r=>r.nome!==nome);
+    db = db.concat(rows);db.push({...meta,_meta:true});
     localStorage.setItem('artyva_db',JSON.stringify(db));
-    ok=true;
+    success=true;
   }
 
-  if(ok){
-    document.getElementById('form-body').style.display='none';
-    document.getElementById('sec-final').style.display='none';
-    document.getElementById('meses-nav').style.display='none';
-    document.getElementById('mes-badge').style.display='none';
-    document.getElementById('barra-nav').style.display='none';
-    document.getElementById('aviso').style.display='none';
-    document.querySelector('.progress-bar').style.display='none';
-    document.getElementById('success').style.display='block';
+  if(success){
+    document.getElementById('tela-form').style.display='none';
+    document.getElementById('bottom-bar').style.display='none';
+    document.getElementById('success-screen').style.display='block';
     window.scrollTo({top:0,behavior:'smooth'});
   }
 }
 
-// ============================================================
-// INIT
-// ============================================================
-buildMeses();
+// =====================================================
+// OTIMIZAÇÃO POR TIPO DE NEGÓCIO
+// =====================================================
+// Departamentos que podem ser ocultados por tipo de negócio
+const DEPS_POR_TIPO = {
+  comercio:   {est:true,  ops:true,  rh:true, fin:true, vnd:true, tec:true},
+  servicos:   {est:false, ops:true,  rh:true, fin:true, vnd:true, tec:true},
+  industria:  {est:true,  ops:true,  rh:true, fin:true, vnd:true, tec:true},
+  alimentacao:{est:true,  ops:true,  rh:true, fin:true, vnd:true, tec:false},
+  tecnologia: {est:false, ops:true,  rh:true, fin:true, vnd:true, tec:true},
+  saude:      {est:false, ops:true,  rh:true, fin:true, vnd:true, tec:true},
+  educacao:   {est:false, ops:true,  rh:true, fin:true, vnd:true, tec:false},
+  construcao: {est:true,  ops:true,  rh:true, fin:true, vnd:true, tec:false},
+};
 
-// Auto-preencher quando vem do link
-(function(){
-  const p=new URLSearchParams(window.location.search);
-  const clienteNome=p.get('cliente');
-  if(clienteNome){
-    const el=document.getElementById('f-nome');
-    if(el){el.value=decodeURIComponent(clienteNome);el.style.color='var(--teal)';el.style.fontWeight='600';}
-    const av=document.getElementById('aviso');
-    if(av){
-      const t=av.querySelector('div');
-      if(t)t.textContent='👋 Olá, '+decodeURIComponent(clienteNome)+'! Antes de começar...';
+// Labels customizados por tipo
+const DEP_LABELS = {
+  servicos:   {ops:'Operações / Processos', vnd:'Vendas / Clientes', est:null},
+  tecnologia: {ops:'Operações / Dev', vnd:'Vendas / MRR', est:null},
+  saude:      {ops:'Operações / Atendimento', vnd:'Vendas / Pacientes', est:null},
+  educacao:   {ops:'Operações / Pedagógico', vnd:'Vendas / Matrículas', est:null},
+};
+
+function atualizarDepsVisiveis(){
+  const tipo = document.getElementById('c-tipo-negocio')?.value || 'comercio';
+  const config = DEPS_POR_TIPO[tipo] || DEPS_POR_TIPO.comercio;
+  // Ocultar seção de estoque se não aplicável
+  const secEst = document.getElementById('sec-est');
+  if(secEst){
+    secEst.style.display = config.est ? '' : 'none';
+    if(!config.est){
+      // Marcar todos campos de estoque como N/A
+      const estDep = DEPS.find(d=>d.id==='est');
+      if(estDep) estDep.fields.forEach(f=>{
+        mesAtual.forEach((_,i)=>{
+          const key=`est-${f.k}-${i}`;
+          if(!naoSeiVals[key]){
+            naoSeiVals[key]=true;
+            vals[key]=-1;
+          }
+        });
+      });
     }
+  }
+  // Ocultar seção de tecnologia se não aplicável
+  const secTec = document.getElementById('sec-tec');
+  if(secTec) secTec.style.display = config.tec ? '' : 'none';
+  if(!config.tec){
+    const tecDep = DEPS.find(d=>d.id==='tec');
+    if(tecDep) tecDep.fields.forEach(f=>{
+      mesAtual.forEach((_,i)=>{
+        const key=`tec-${f.k}-${i}`;
+        if(!naoSeiVals[key]){naoSeiVals[key]=true;vals[key]=-1;}
+      });
+    });
+  }
+  // Avisos contextuais
+  const tipo_label = document.getElementById('c-tipo-negocio')?.options[document.getElementById('c-tipo-negocio')?.selectedIndex]?.text || '';
+  const avisos = [];
+  if(!config.est) avisos.push('📦 Seção <strong>Estoque</strong> ocultada — não se aplica ao seu tipo de negócio.');
+  if(!config.tec) avisos.push('💻 Seção <strong>Tecnologia</strong> ocultada — não aplicável ao seu segmento.');
+  const avisoEl = document.getElementById('aviso-deps-ocultos');
+  if(avisoEl){
+    avisoEl.style.display = avisos.length ? 'block' : 'none';
+    avisoEl.innerHTML = avisos.join('<br>');
+  }
+}
+
+// =====================================================
+// AUTO-PREENCHER NOME
+// =====================================================
+const _p = new URLSearchParams(window.location.search);
+const _cl = _p.get('cliente');
+const _id = _p.get('id');
+
+// Se veio por link com ID, buscar nome exato do banco (evita divergência de nomes)
+(async function(){
+  if(_id && sb){
+    try{
+      const {data:cliData} = await sb.from('clientes').select('nome,status,link_usado,periodo').eq('id',_id).limit(1);
+      if(cliData && cliData.length > 0){
+        const cli = cliData[0];
+        // Verificar se link já foi usado
+        if(cli.status==='Preenchido' || cli.link_usado){
+          document.getElementById('tela-inicial').style.display='none';
+          document.getElementById('aviso-conf').style.display='none';
+          document.getElementById('ja-preenchido-screen').style.display='block';
+          return;
+        }
+        // Preencher nome exato e travar campo
+        const _el = document.getElementById('c-nome');
+        if(_el){ _el.value = cli.nome; _el.readOnly = true; _el.style.opacity='0.7'; }
+        // Preencher período do cadastro
+        if(cli.periodo){
+          const perEl = document.getElementById('c-periodo');
+          if(perEl) perEl.value = String(cli.periodo);
+        }
+        return;
+      }
+    }catch(e){ console.warn('Erro ao buscar cliente por ID:', e.message); }
+  }
+  // Fallback: usar parâmetro ?cliente= da URL
+  if(_cl){
+    const _el = document.getElementById('c-nome');
+    if(_el) _el.value = decodeURIComponent(_cl);
   }
 })();
 </script>
